@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ЮMoney P2P Калькулятор</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg-color: #0f141c;
+      --card-bg: #182232;
+      --card-border: #233348;
+      --accent-green: #00d674;
+      --accent-green-bg: rgba(0, 214, 116, 0.12);
+      --accent-blue: #2ea6ff;
+      --text-main: #ffffff;
+      --text-muted: #8d9bb0;
+      --danger: #ff5252;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg-color);
+      color: var(--text-main);
+      padding: 16px;
+      padding-bottom: 40px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 20px;
+      background: var(--accent-green-bg);
+      color: var(--accent-green);
+      border: 1px solid rgba(0, 214, 116, 0.3);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .input-wrapper {
+      display: flex;
+      align-items: center;
+      background: #0d131d;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+    }
+
+    .input-wrapper input {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      font-weight: 700;
+      width: 100%;
+      outline: none;
+    }
+
+    .input-wrapper .currency {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      margin-left: 8px;
+    }
+
+    .slider {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #233348;
+      outline: none;
+      -webkit-appearance: none;
+      margin-bottom: 14px;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 214, 116, 0.5);
+    }
+
+    .chips {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      background: #111a26;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip.active, .chip:hover {
+      background: var(--accent-blue);
+      color: #fff;
+      border-color: var(--accent-blue);
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .res-box {
+      background: #111a26;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .res-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .res-val {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .res-val.green {
+      color: var(--accent-green);
+    }
+
+    .profit-banner {
+      background: linear-gradient(135deg, rgba(0, 214, 116, 0.15) 0%, rgba(46, 166, 255, 0.15) 100%);
+      border: 1px solid rgba(0, 214, 116, 0.3);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .profit-text {
+      font-size: 13px;
+      color: #e2e8f0;
+    }
+
+    .profit-num {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent-green);
+    }
+
+    .deals-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .deal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .deal-card.highlight {
+      border-color: rgba(0, 214, 116, 0.4);
+      background: linear-gradient(180deg, #182232 0%, #131d2b 100%);
+    }
+
+    .deal-price {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .deal-tag {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: var(--accent-green-bg);
+      color: var(--accent-green);
+      font-weight: 600;
+    }
+
+    .deal-merchant {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .deal-limits {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    .deal-btn {
+      background: var(--accent-blue);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .main-btn {
+      background: #0088cc;
+      color: #fff;
+      border: none;
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: 0 4px 14px rgba(0, 136, 204, 0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-title">
+      <span>⚡ ЮMoney P2P</span>
+      <span class="badge">ТОЛЬКО ЮMONEY</span>
+    </div>
+    <div id="live-time" style="font-size: 12px; color: var(--text-muted);">Обновлено</div>
+  </div>
+
+  <!-- CALCULATOR CARD -->
+  <div class="card">
+    <div class="card-title">💰 Калькулятор суммы вывода</div>
+    
+    <div class="input-wrapper">
+      <input type="number" id="rub-input" value="25000" step="1000" min="1000" max="150000">
+      <span class="currency">₽</span>
+    </div>
+
+    <input type="range" class="slider" id="rub-slider" min="1000" max="100000" step="1000" value="25000">
+
+    <div class="chips">
+      <div class="chip" onclick="setAmount(5000)">5 000 ₽</div>
+      <div class="chip" onclick="setAmount(10000)">10 000 ₽</div>
+      <div class="chip" onclick="setAmount(15000)">15 000 ₽</div>
+      <div class="chip active" onclick="setAmount(25000)">25 000 ₽</div>
+      <div class="chip" onclick="setAmount(40000)">40 000 ₽</div>
+      <div class="chip" onclick="setAmount(50000)">50 000 ₽</div>
+      <div class="chip" onclick="setAmount(0)">🌊 Любая</div>
+    </div>
+
+    <div class="results-grid">
+      <div class="res-box">
+        <div class="res-label">Вы получите USDT</div>
+        <div class="res-val" id="usdt-res">243.0 USDT</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">На карту (в BYN)</div>
+        <div class="res-val green" id="byn-res">~872.4 BYN</div>
+      </div>
+    </div>
+
+    <div class="profit-banner">
+      <span class="profit-text">Чистая выгода vs банкомат:</span>
+      <span class="profit-num" id="profit-val">+118 BYN 🔥</span>
+    </div>
+  </div>
+
+  <!-- CURRENT OFFERS -->
+  <div class="deals-header">
+    <span style="font-size: 14px; font-weight: 700;">📊 Продавцы ЮMoney</span>
+    <span style="font-size: 12px; color: var(--accent-blue); cursor: pointer;" onclick="fetchRates()">🔄 Обновить</span>
+  </div>
+
+  <div id="deals-list">
+    <!-- Rendered dynamically -->
+  </div>
+
+  <a href="https://t.me/wallet/p2p" target="_blank" class="main-btn" onclick="openWallet()">
+    ⚡ Открыть Telegram Wallet P2P
+  </a>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.expand();
+      tg.setHeaderColor('#0f141c');
+      tg.setBackgroundColor('#0f141c');
+    }
+
+    let currentAmount = 25000;
+    const sellRateBYN = 3.59; // средний курс мейкера
+
+    // Мок/актуальный стакан ЮMoney
+    let merchants = [
+      { price: 102.90, name: "Known Mule", deals: 57, rate: 100, min: 9000, max: 99000 },
+      { price: 102.92, name: "Lonely Dolphin", deals: 69, rate: 96, min: 10000, max: 80722 },
+      { price: 102.94, name: "Lonely Chameleon", deals: 67, rate: 98, min: 5000, max: 100000 },
+      { price: 103.50, name: "Fantastic Frog", deals: 84, rate: 97, min: 3000, max: 50000 },
+      { price: 104.00, name: "Bright Seal", deals: 110, rate: 99, min: 1000, max: 30000 }
+    ];
+
+    const input = document.getElementById('rub-input');
+    const slider = document.getElementById('rub-slider');
+    const usdtRes = document.getElementById('usdt-res');
+    const bynRes = document.getElementById('byn-res');
+    const profitVal = document.getElementById('profit-val');
+    const dealsList = document.getElementById('deals-list');
+
+    function updateCalc() {
+      const amt = currentAmount > 0 ? currentAmount : 25000;
+      
+      // Ищем лучшую цену, подходящую под лимиты
+      const matching = merchants.filter(m => (currentAmount === 0) || (m.min <= currentAmount && m.max >= currentAmount));
+      const bestPrice = matching.length > 0 ? matching[0].price : (merchants[0] ? merchants[0].price : 103.0);
+
+      const usdt = amt / bestPrice;
+      const byn = usdt * sellRateBYN;
+      
+      // Сравнение с прямым банковским выводом (3% + 45 руб комиссия, конвертация по ~30.5)
+      const directBYN = ((amt - 45) / 1.03) / 30.5;
+      const profit = Math.max(0, byn - directBYN);
+
+      usdtRes.innerText = `${usdt.toFixed(1)} USDT`;
+      bynRes.innerText = `~${byn.toFixed(1)} BYN`;
+      profitVal.innerText = `+${profit.toFixed(0)} BYN 🔥`;
+
+      renderDeals();
+    }
+
+    function setAmount(val) {
+      currentAmount = val;
+      input.value = val > 0 ? val : "";
+      if (val > 0) slider.value = Math.min(val, 100000);
+      
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      const activeChip = Array.from(document.querySelectorAll('.chip')).find(c => {
+        if (val === 0 && c.innerText.includes('Любая')) return true;
+        return c.innerText.replace(/\s+/g, '').includes(val.toString());
+      });
+      if (activeChip) activeChip.classList.add('active');
+
+      if (tg?.HapticFeedback) tg.HapticFeedback.selectionChanged();
+      updateCalc();
+    }
+
+    input.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value) || 0;
+      currentAmount = val;
+      slider.value = Math.min(val, 100000);
+      updateCalc();
+    });
+
+    slider.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value) || 0;
+      currentAmount = val;
+      input.value = val;
+      updateCalc();
+    });
+
+    function renderDeals() {
+      dealsList.innerHTML = "";
+      merchants.forEach((m, idx) => {
+        const isMatch = currentAmount === 0 || (m.min <= currentAmount && m.max >= currentAmount);
+        const card = document.createElement('div');
+        card.className = `deal-card ${isMatch ? 'highlight' : ''}`;
+        
+        card.innerHTML = `
+          <div>
+            <div class="deal-price">
+              ${m.price.toFixed(2)} ₽
+              <span class="deal-tag">🟢 ЮMoney</span>
+            </div>
+            <div class="deal-merchant">👤 ${m.name} (${m.deals} сд, ${m.rate}%)</div>
+            <div class="deal-limits">Лимиты: ${m.min.toLocaleString()} – ${m.max.toLocaleString()} ₽</div>
+          </div>
+          <div>
+            <a href="https://t.me/wallet/p2p" target="_blank" class="deal-btn" onclick="openWallet()">
+              Купить
+            </a>
+          </div>
+        `;
+        dealsList.appendChild(card);
+      });
+    }
+
+    function openWallet() {
+      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+      if (tg?.openTelegramLink) {
+        tg.openTelegramLink('https://t.me/wallet/p2p');
+      }
+    }
+
+    function fetchRates() {
+      const now = new Date();
+      document.getElementById('live-time').innerText = now.toLocaleTimeString();
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      updateCalc();
+    }
+
+    fetchRates();
+  </script>
+</body>
+</html>
