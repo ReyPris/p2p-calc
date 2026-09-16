@@ -1013,12 +1013,16 @@
       if (tg && typeof tg.openTelegramLink === 'function') {
         try {
           tg.openTelegramLink(url);
-        } catch (e) {
-          window.location.href = url;
-        }
-      } else {
-        window.open(url, '_blank');
+          return;
+        } catch (e) {}
       }
+      if (tg && typeof tg.openLink === 'function') {
+        try {
+          tg.openLink(url);
+          return;
+        } catch (e) {}
+      }
+      window.location.href = url;
     }
 
     function copyDealLink(orderId, userId) {
@@ -1026,7 +1030,7 @@
       const url = makeWalletDealUrl(orderId, userId);
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(url).then(() => {
-          showToast('Ссылка на ордер скопирована');
+          showToast('Прямая ссылка на ордер скопирована');
         }).catch(() => fallbackCopy(url));
       } else {
         fallbackCopy(url);
@@ -1053,12 +1057,14 @@
     const bankRate = 0.0353;
 
     let merchants = [
-      { id: '11098533754369', userId: 563819851677852, price: 90.30, name: 'Young Chameleon', deals: 19, rate: 100, min: 5000, max: 50000, qty: 587.5 },
-      { id: '10318168327170', userId: 35393455702271, price: 90.50, name: 'Tall Hawk', deals: 393, rate: 100, min: 1786, max: 25000, qty: 350.0 },
-      { id: '11136012085768', userId: 458279175340084, price: 90.80, name: 'Strict Ant', deals: 1, rate: 100, min: 10000, max: 30000, qty: 434.3 },
-      { id: '10825373231873', userId: 493421639139384, price: 91.20, name: 'Cute Antelope', deals: 42, rate: 98, min: 5000, max: 85000, qty: 350.0 },
-      { id: '11135892104512', userId: 524109832104921, price: 91.50, name: 'Alexandertopalto', deals: 114, rate: 99, min: 10000, max: 90000, qty: 650.0 },
-      { id: '10983412093841', userId: 394812039481230, price: 100.55, name: 'Known Mule', deals: 57, rate: 100, min: 9000, max: 99000, qty: 800.0 }
+      { id: '7640381416452', userId: 257038, price: 91.43, name: 'Bold Croc', deals: 130, rate: 100, min: 15000, max: 72317, qty: 791.0 },
+      { id: '10851063145987', userId: 3003974, price: 92.79, name: 'Groovy Bull', deals: 200, rate: 99, min: 1000, max: 8780, qty: 94.6 },
+      { id: '10981611181317', userId: 5484387, price: 93.63, name: 'Quick Peacock', deals: 215, rate: 98, min: 1250, max: 1250, qty: 13.3 },
+      { id: '10787401957635', userId: 387879754367097, price: 94.69, name: 'Savvy Seagull', deals: 2481, rate: 100, min: 40000, max: 195335, qty: 2062.9 },
+      { id: '11132789356294', userId: 634201030000869, price: 94.49, name: 'Big Scorpion', deals: 3, rate: 100, min: 1500, max: 13485, qty: 142.7 },
+      { id: '2190170', userId: 3240252, price: 96.49, name: 'EASYchange', deals: 202, rate: 100, min: 10000, max: 24300, qty: 251.8 },
+      { id: '10780952040964', userId: 528580098654407, price: 96.85, name: 'Able Seagull', deals: 463, rate: 100, min: 50000, max: 225933, qty: 2332.8 },
+      { id: '11081825111303', userId: 528612761010279, price: 99.89, name: 'Known Mule', deals: 115, rate: 100, min: 10000, max: 99000, qty: 1000.0 }
     ];
 
     if (urlParams.get('d')) {
