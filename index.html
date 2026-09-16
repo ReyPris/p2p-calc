@@ -1054,14 +1054,16 @@
     const bankRate = 0.0353;
 
     let merchants = [
-      { id: '11000620332034', userId: 132304295, price: 92.78, name: 'Magic Giraffe', deals: 45, rate: 100, min: 1000, max: 25000, qty: 269.4 },
-      { id: '10661701371393', userId: 458190626521194, price: 99.00, name: 'Fantastic Fish', deals: 82, rate: 100, min: 10000, max: 200000, qty: 2020.2 },
-      { id: '11084415545096', userId: 563780189749301, price: 99.89, name: 'Lonely Dolphin', deals: 154, rate: 100, min: 5000, max: 50000, qty: 500.5 },
-      { id: '11081825111303', userId: 528612761010279, price: 99.92, name: 'Known Mule', deals: 115, rate: 100, min: 10000, max: 99000, qty: 990.7 },
-      { id: '11112240296711', userId: 423014855901269, price: 99.92, name: 'Large Seagull', deals: 320, rate: 99, min: 5000, max: 40000, qty: 400.3 },
-      { id: '10636078879490', userId: 528614575751401, price: 99.92, name: 'Lonely Chameleon', deals: 95, rate: 100, min: 2000, max: 20000, qty: 200.1 },
-      { id: '11059056074760', userId: 493418423091454, price: 99.92, name: 'Tidy Bee', deals: 210, rate: 100, min: 10000, max: 50000, qty: 500.0 },
-      { id: '10455189913346', userId: 493420014534800, price: 99.93, name: 'Splendid Whale', deals: 178, rate: 100, min: 5000, max: 30000, qty: 300.0 }
+      { id: '11044671502598', userId: 70481573445847, price: 93.00, name: 'Alexandertopalto', deals: 1205, rate: 100, min: 5000, max: 34501, qty: 371.0 },
+      { id: '11081825111303', userId: 528612761010279, price: 99.80, name: 'Known Mule', deals: 116, rate: 100, min: 10000, max: 99000, qty: 1000.0 },
+      { id: '10636078879490', userId: 528614575751401, price: 99.83, name: 'Lonely Chameleon', deals: 96, rate: 97, min: 8000, max: 92188, qty: 923.5 },
+      { id: '11112240296711', userId: 423014855901269, price: 99.85, name: 'Large Seagull', deals: 361, rate: 100, min: 7000, max: 44000, qty: 464.7 },
+      { id: '11084415545096', userId: 563780189749301, price: 99.85, name: 'Lonely Dolphin', deals: 101, rate: 98, min: 10000, max: 86908, qty: 870.4 },
+      { id: '11059056074760', userId: 493418423091454, price: 99.85, name: 'Tidy Bee', deals: 68, rate: 96, min: 8000, max: 99559, qty: 997.1 },
+      { id: '10455189913346', userId: 493420014534800, price: 99.93, name: 'Splendid Whale', deals: 39, rate: 98, min: 6000, max: 58880, qty: 1084.5 },
+      { id: '11134072674054', userId: 563759151939671, price: 99.98, name: 'Swift Lion', deals: 236, rate: 99, min: 5000, max: 40000, qty: 487.7 },
+      { id: '11110439688961', userId: 563829920301281, price: 99.99, name: 'Agile Dolphin', deals: 4, rate: 100, min: 4000, max: 34746, qty: 347.5 },
+      { id: '10337166985477', userId: 8750967, price: 101.03, name: 'Proud Lion', deals: 467, rate: 95, min: 5000, max: 15500, qty: 154.7 }
     ];
 
     if (urlParams.get('d')) {
@@ -1080,22 +1082,22 @@
             deals: it.d,
             rate: it.r,
             qty: it.q || 0
-          })).filter(it => !['savvy seagull', 'able seagull', 'bold croc', 'groovy bull', 'alexandertopalto'].includes(it.name.toLowerCase()));
+          }));
           if (fresh.length > 0) {
             merchants = fresh;
-            localStorage.setItem('cached_yoomoney_deals_v4', JSON.stringify(merchants));
+            localStorage.setItem('cached_yoomoney_deals_v5', JSON.stringify(merchants));
           }
         }
       } catch (e) {}
-    } else if (localStorage.getItem('cached_yoomoney_deals_v4')) {
+    } else if (localStorage.getItem('cached_yoomoney_deals_v5')) {
       try {
-        const stored = JSON.parse(localStorage.getItem('cached_yoomoney_deals_v4'));
-        const valid = stored.filter(it => !['savvy seagull', 'able seagull', 'bold croc', 'alexandertopalto'].includes(it.name.toLowerCase()));
-        if (valid.length > 0) merchants = valid;
+        const stored = JSON.parse(localStorage.getItem('cached_yoomoney_deals_v5'));
+        if (stored && stored.length > 0) merchants = stored;
       } catch (e) {}
     }
     localStorage.removeItem('cached_p2p_deals');
     localStorage.removeItem('cached_yoomoney_deals_v3');
+    localStorage.removeItem('cached_yoomoney_deals_v4');
 
     merchants.sort((a, b) => a.price - b.price);
 
