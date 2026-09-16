@@ -997,14 +997,11 @@
     }
 
     function makeWalletDealUrl(orderId, userId) {
-      if (!orderId || !userId) return 'https://t.me/wallet';
-      try {
-        const raw = 'operation=offer&ad' + orderId + '_' + userId;
-        const b64 = btoa(raw).replace(/=/g, '');
-        return 'https://t.me/wallet/start?startapp=v2-' + b64;
-      } catch (e) {
-        return 'https://t.me/wallet';
+      if (!orderId) return 'https://t.me/wallet';
+      if (userId) {
+        return 'https://t.me/wallet/start?startapp=offerid_' + orderId + '_' + userId;
       }
+      return 'https://t.me/wallet/start?startapp=offerid_' + orderId;
     }
 
     function openDealDirect(orderId, userId) {
