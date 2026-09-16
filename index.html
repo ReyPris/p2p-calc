@@ -2,28 +2,33 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ЮMoney P2P & Сирена</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>ЮMoney P2P Pro Terminal</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg-color: #0c1017;
-      --card-bg: #151d2a;
-      --card-border: #222f42;
-      --accent-green: #00d674;
-      --accent-green-bg: rgba(0, 214, 116, 0.12);
-      --accent-blue: #2ea6ff;
-      --accent-blue-bg: rgba(46, 166, 255, 0.12);
+      --bg-color: #080c13;
+      --card-bg: #121924;
+      --card-border: #1c2637;
+      --card-hover: #16202f;
+      --accent-green: #00e676;
+      --accent-green-bg: rgba(0, 230, 118, 0.12);
+      --accent-blue: #29b6f6;
+      --accent-blue-bg: rgba(41, 182, 246, 0.12);
+      --accent-gold: #ffb300;
+      --accent-gold-bg: rgba(255, 179, 0, 0.12);
       --text-main: #ffffff;
-      --text-muted: #8d9bb0;
+      --text-muted: #8493a8;
+      --text-sub: #54657a;
       --danger: #ff5252;
+      --bottom-bar-height: 68px;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
     }
@@ -31,48 +36,104 @@
     body {
       background: var(--bg-color);
       color: var(--text-main);
-      padding: 16px;
-      padding-bottom: 50px;
+      padding: 14px;
+      padding-bottom: calc(var(--bottom-bar-height) + 20px);
       user-select: none;
       -webkit-user-select: none;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    .header {
+    /* TOP HEADER */
+    .top-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
+      padding: 2px 2px;
     }
 
-    .header-title {
-      font-size: 19px;
-      font-weight: 800;
+    .brand {
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .badge {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 8px;
-      border-radius: 20px;
-      background: var(--accent-green-bg);
-      color: var(--accent-green);
-      border: 1px solid rgba(0, 214, 116, 0.3);
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
+    .badge-pro {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 6px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #00e676, #00b0ff);
+      color: #05080e;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .header-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-green);
+      background: var(--accent-green-bg);
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 230, 118, 0.25);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.15); }
+      100% { opacity: 0.4; transform: scale(0.9); }
+    }
+
+    /* TABS CONTENT CONTAINER */
+    .tab-view {
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .tab-view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* COMMON CARDS */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 16px;
       padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      margin-bottom: 12px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
     }
 
     .card-title {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.6px;
@@ -83,13 +144,217 @@
       align-items: center;
     }
 
+    /* QUICK FILTER PILLS */
+    .filter-bar {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+      margin-bottom: 12px;
+    }
+
+    .filter-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-pill {
+      background: #0d141e;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 7px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-pill.active {
+      background: var(--accent-blue);
+      color: #fff;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 12px rgba(41, 182, 246, 0.35);
+    }
+
+    /* ORDERBOOK LIST */
+    .deal-item {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .deal-item.target-match {
+      border-color: rgba(0, 230, 118, 0.45);
+      background: linear-gradient(180deg, #131d2b 0%, #0e1520 100%);
+    }
+
+    .deal-item.target-match::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--accent-green);
+    }
+
+    .deal-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .deal-price-box {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .deal-price {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: #fff;
+    }
+
+    .deal-curr {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .tag-match {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 6px;
+      border-radius: 6px;
+      background: var(--accent-green-bg);
+      color: var(--accent-green);
+      border: 1px solid rgba(0, 230, 118, 0.3);
+      text-transform: uppercase;
+    }
+
+    .deal-user-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .user-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #1c2738;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--accent-blue);
+    }
+
+    .user-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #e1e7f0;
+    }
+
+    .user-stats {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    .deal-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: #090e15;
+      padding: 9px 12px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #141c29;
+    }
+
+    .meta-col .lbl {
+      font-size: 10px;
+      color: var(--text-sub);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .meta-col .val {
+      font-size: 12px;
+      font-weight: 700;
+      color: #cfd8e3;
+    }
+
+    .deal-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn-buy-direct {
+      flex: 1;
+      background: linear-gradient(135deg, #00e676 0%, #00b05e 100%);
+      color: #04090f;
+      border: none;
+      padding: 11px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 4px 14px rgba(0, 230, 118, 0.35);
+      transition: transform 0.1s, opacity 0.15s;
+    }
+
+    .btn-buy-direct:active {
+      transform: scale(0.97);
+      opacity: 0.9;
+    }
+
+    .btn-copy-link {
+      background: #141d2a;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .btn-copy-link:active {
+      transform: scale(0.92);
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    /* CALCULATOR STYLES */
     .input-wrapper {
       display: flex;
       align-items: center;
-      background: #090d14;
+      background: #090e15;
       border: 1.5px solid var(--card-border);
-      border-radius: 12px;
-      padding: 8px 14px;
+      border-radius: 14px;
+      padding: 10px 14px;
       margin-bottom: 12px;
       transition: border-color 0.2s;
     }
@@ -102,7 +367,7 @@
       background: transparent;
       border: none;
       color: #fff;
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 800;
       width: 100%;
       outline: none;
@@ -111,8 +376,8 @@
     }
 
     .input-wrapper .currency {
-      font-size: 20px;
-      font-weight: 700;
+      font-size: 22px;
+      font-weight: 800;
       color: var(--accent-blue);
       margin-left: 8px;
     }
@@ -121,7 +386,7 @@
       width: 100%;
       height: 6px;
       border-radius: 3px;
-      background: #233348;
+      background: #1e2a3b;
       outline: none;
       -webkit-appearance: none;
       margin-bottom: 14px;
@@ -135,12 +400,12 @@
       border-radius: 50%;
       background: var(--accent-green);
       cursor: pointer;
-      box-shadow: 0 0 10px rgba(0, 214, 116, 0.6);
+      box-shadow: 0 0 12px rgba(0, 230, 118, 0.7);
     }
 
     .chips-group {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       overflow-x: auto;
       padding-bottom: 4px;
       scrollbar-width: none;
@@ -155,17 +420,14 @@
       background: #0e1622;
       border: 1px solid var(--card-border);
       color: var(--text-muted);
-      padding: 8px 14px;
-      border-radius: 12px;
-      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 12px;
       font-weight: 700;
       white-space: nowrap;
       cursor: pointer;
       transition: all 0.15s ease;
       outline: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .chip-btn:active {
@@ -174,16 +436,16 @@
 
     .chip-btn.active {
       background: var(--accent-blue);
-      color: #ffffff;
+      color: #fff;
       border-color: var(--accent-blue);
-      box-shadow: 0 0 12px rgba(46, 166, 255, 0.4);
+      box-shadow: 0 0 10px rgba(41, 182, 246, 0.4);
     }
 
     .chip-btn.green-active.active {
       background: var(--accent-green);
-      color: #0b141a;
+      color: #060b12;
       border-color: var(--accent-green);
-      box-shadow: 0 0 12px rgba(0, 214, 116, 0.4);
+      box-shadow: 0 0 10px rgba(0, 230, 118, 0.4);
     }
 
     .results-grid {
@@ -194,7 +456,7 @@
     }
 
     .res-box {
-      background: #0a0e17;
+      background: #090e15;
       border: 1px solid var(--card-border);
       border-radius: 12px;
       padding: 12px;
@@ -218,10 +480,10 @@
     }
 
     .profit-banner {
-      background: linear-gradient(135deg, rgba(0, 214, 116, 0.15) 0%, rgba(46, 166, 255, 0.15) 100%);
-      border: 1px solid rgba(0, 214, 116, 0.3);
-      border-radius: 12px;
-      padding: 12px 14px;
+      background: linear-gradient(135deg, rgba(0, 230, 118, 0.15) 0%, rgba(41, 182, 246, 0.15) 100%);
+      border: 1px solid rgba(0, 230, 118, 0.35);
+      border-radius: 14px;
+      padding: 14px;
       margin-top: 12px;
       display: flex;
       justify-content: space-between;
@@ -231,15 +493,34 @@
     .profit-text {
       font-size: 12px;
       color: #e2e8f0;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .profit-num {
-      font-size: 15px;
-      font-weight: 800;
+      font-size: 16px;
+      font-weight: 900;
       color: var(--accent-green);
     }
 
+    /* MATCHED DEAL BOX */
+    .matched-box {
+      background: #0c131d;
+      border: 1px solid #1a2536;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-top: 14px;
+    }
+
+    .matched-header {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    /* SETTINGS / RADAR */
     .settings-row {
       margin-bottom: 14px;
     }
@@ -258,8 +539,8 @@
     }
 
     .apply-btn {
-      background: linear-gradient(135deg, #00d674 0%, #00b05e 100%);
-      color: #0b141a;
+      background: linear-gradient(135deg, #00e676 0%, #00b05e 100%);
+      color: #04090f;
       border: none;
       width: 100%;
       padding: 14px;
@@ -271,121 +552,108 @@
       justify-content: center;
       align-items: center;
       gap: 8px;
-      margin-top: 14px;
-      box-shadow: 0 4px 16px rgba(0, 214, 116, 0.35);
-      transition: transform 0.1s, opacity 0.15s;
+      margin-top: 16px;
+      box-shadow: 0 4px 16px rgba(0, 230, 118, 0.4);
+      transition: transform 0.1s;
     }
 
     .apply-btn:active {
       transform: scale(0.97);
-      opacity: 0.9;
     }
 
-    .deal-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 12px 14px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: border-color 0.2s;
+    /* ANALYTICS TABLE */
+    .table-box {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
     }
 
-    .deal-card.highlight {
-      border-color: rgba(0, 214, 116, 0.45);
-      background: linear-gradient(180deg, #151d2a 0%, #101722 100%);
-    }
-
-    .deal-price {
-      font-size: 18px;
-      font-weight: 800;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .deal-tag {
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 6px;
-      background: var(--accent-green-bg);
-      color: var(--accent-green);
-      font-weight: 700;
-    }
-
-    .deal-merchant {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 3px;
-    }
-
-    .deal-limits {
+    .table-box th {
+      text-align: left;
       font-size: 11px;
-      color: #64748b;
-      margin-top: 2px;
+      color: var(--text-sub);
+      padding: 8px 6px;
+      border-bottom: 1px solid var(--card-border);
+      font-weight: 700;
+      text-transform: uppercase;
     }
 
-    .deal-buy-btn {
-      background: var(--accent-blue);
-      color: #fff;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 10px;
+    .table-box td {
+      padding: 10px 6px;
+      border-bottom: 1px solid #141c29;
       font-size: 13px;
       font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      transition: transform 0.1s;
     }
 
-    .deal-buy-btn:active {
-      transform: scale(0.95);
+    .table-box td.green {
+      color: var(--accent-green);
     }
 
-    .wallet-btn {
-      background: #0088cc;
-      color: #fff;
-      border: none;
-      width: 100%;
-      padding: 14px;
-      border-radius: 14px;
-      font-size: 15px;
-      font-weight: 800;
+    /* BOTTOM NAVIGATION BAR */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-bar-height);
+      background: rgba(12, 16, 24, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid #1c2738;
       display: flex;
-      justify-content: center;
+      justify-content: space-around;
       align-items: center;
-      gap: 8px;
+      padding: 0 10px;
+      z-index: 999;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--text-sub);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 700;
       cursor: pointer;
-      margin-top: 10px;
-      box-shadow: 0 4px 14px rgba(0, 136, 204, 0.35);
+      transition: all 0.15s ease;
+      padding: 6px 12px;
+      border-radius: 12px;
     }
 
-    .wallet-btn:active {
-      transform: scale(0.97);
+    .nav-btn .icon {
+      font-size: 18px;
     }
 
+    .nav-btn.active {
+      color: var(--accent-blue);
+    }
+
+    .nav-btn.active .icon {
+      transform: scale(1.15);
+    }
+
+    /* TOAST */
     #toast {
       position: fixed;
-      bottom: 24px;
+      top: 16px;
       left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: #00d674;
-      color: #0b141a;
+      transform: translateX(-50%) translateY(-100px);
+      background: #00e676;
+      color: #04090f;
       font-weight: 800;
-      padding: 12px 24px;
+      padding: 10px 20px;
       border-radius: 30px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
       z-index: 9999;
       transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      font-size: 14px;
+      font-size: 13px;
       pointer-events: none;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     #toast.show {
@@ -395,131 +663,264 @@
 </head>
 <body>
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="header-title">
-      <span>⚡ ЮMoney P2P</span>
-      <span class="badge">PRO v4.5</span>
-    </div>
-    <div id="live-status" style="font-size: 12px; color: var(--accent-green); font-weight: 700;">● Мониторинг</div>
-  </div>
-
-  <!-- CALCULATOR CARD -->
-  <div class="card">
-    <div class="card-title">
-      <span>💰 Калькулятор суммы вывода</span>
-      <span id="rate-badge" style="color: var(--accent-blue); font-size: 11px;">Курс: ~89.8 ₽</span>
-    </div>
-    
-    <div class="input-wrapper">
-      <input type="number" id="rub-input" value="25000" step="1000" min="1000" max="200000">
-      <span class="currency">₽</span>
-    </div>
-
-    <input type="range" class="slider" id="rub-slider" min="1000" max="100000" step="1000" value="25000">
-
-    <div class="chips-group" id="amount-chips">
-      <button type="button" class="chip-btn" data-val="5000">5 000 ₽</button>
-      <button type="button" class="chip-btn" data-val="10000">10 000 ₽</button>
-      <button type="button" class="chip-btn" data-val="15000">15 000 ₽</button>
-      <button type="button" class="chip-btn active" data-val="25000">25 000 ₽</button>
-      <button type="button" class="chip-btn" data-val="40000">40 000 ₽</button>
-      <button type="button" class="chip-btn" data-val="50000">50 000 ₽</button>
-      <button type="button" class="chip-btn" data-val="0">🌊 Любая</button>
-    </div>
-
-    <div class="results-grid">
-      <div class="res-box">
-        <div class="res-label">Вы получите USDT</div>
-        <div class="res-val" id="usdt-res">278.4 USDT</div>
-      </div>
-      <div class="res-box">
-        <div class="res-label">На карту (в BYN)</div>
-        <div class="res-val green" id="byn-res">~999.5 BYN</div>
+  <!-- TOP HEADER -->
+  <div class="top-header">
+    <div class="brand">
+      <div class="brand-title">
+        <span>⚡ YooMoney P2P</span>
+        <span class="badge-pro">PRO</span>
       </div>
     </div>
-
-    <div class="profit-banner">
-      <span class="profit-text">Чистая выгода vs банкомат:</span>
-      <span class="profit-num" id="profit-val">+142 BYN 🔥</span>
+    <div class="header-status">
+      <div class="status-dot"></div>
+      <span id="rate-ticker">~89.5 ₽</span>
     </div>
   </div>
 
-  <!-- SIREN & RATE SETTINGS CARD -->
-  <div class="card">
-    <div class="card-title">
-      <span>⚙️ Настройки бота и сирены</span>
-      <span style="font-size: 11px; color: var(--accent-green);">⚡ 2 сек</span>
+  <!-- ============================================================ -->
+  <!-- TAB 1: ⚡ СТАКАН P2P (LIVE ORDERBOOK)                          -->
+  <!-- ============================================================ -->
+  <div id="tab-market" class="tab-view active">
+    <!-- Filter Pills -->
+    <div class="filter-bar">
+      <button type="button" class="filter-pill active" data-filter="all">Все ордера</button>
+      <button type="button" class="filter-pill" data-filter="15k">до 15 000 ₽</button>
+      <button type="button" class="filter-pill" data-filter="30k">15k – 40k ₽</button>
+      <button type="button" class="filter-pill" data-filter="50k">от 40 000 ₽</button>
     </div>
 
-    <!-- Target Price Row -->
-    <div class="settings-row">
-      <div class="settings-label">
-        <span>🎯 Порог срабатывания пинга</span>
-        <span class="curr" id="label-target">88.0 ₽</span>
+    <!-- Live Deals List -->
+    <div id="orderbook-list">
+      <!-- Injected via JavaScript -->
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- TAB 2: 🧮 КАЛЬКУЛЯТОР АРБИТРАЖА                             -->
+  <!-- ============================================================ -->
+  <div id="tab-calc" class="tab-view">
+    <div class="card">
+      <div class="card-title">
+        <span>💰 Сумма вывода из ЮMoney</span>
+        <span id="calc-best-rate" style="color: var(--accent-blue); font-size: 11px;">Курс: ~89.5 ₽</span>
       </div>
-      <div class="chips-group" id="target-chips">
-        <button type="button" class="chip-btn" data-target="85.0">85.0 ₽</button>
-        <button type="button" class="chip-btn active" data-target="88.0">88.0 ₽</button>
-        <button type="button" class="chip-btn" data-target="90.0">90.0 ₽</button>
-        <button type="button" class="chip-btn" data-target="92.0">92.0 ₽</button>
-        <button type="button" class="chip-btn" data-target="95.0">95.0 ₽</button>
+
+      <div class="input-wrapper">
+        <input type="number" id="rub-input" value="25000" step="1000" min="1000" max="200000">
+        <span class="currency">₽</span>
+      </div>
+
+      <input type="range" class="slider" id="rub-slider" min="1000" max="100000" step="1000" value="25000">
+
+      <div class="chips-group" id="amount-chips">
+        <button type="button" class="chip-btn" data-val="5000">5 000 ₽</button>
+        <button type="button" class="chip-btn" data-val="10000">10 000 ₽</button>
+        <button type="button" class="chip-btn" data-val="15000">15 000 ₽</button>
+        <button type="button" class="chip-btn active" data-val="25000">25 000 ₽</button>
+        <button type="button" class="chip-btn" data-val="50000">50 000 ₽</button>
+        <button type="button" class="chip-btn" data-val="100000">100 000 ₽</button>
+      </div>
+
+      <div class="results-grid">
+        <div class="res-box">
+          <div class="res-label">Вы получите USDT</div>
+          <div class="res-val" id="usdt-res">279.3 USDT</div>
+        </div>
+        <div class="res-box">
+          <div class="res-label">На карту в Альфу (BYN)</div>
+          <div class="res-val green" id="byn-res">~1 002.8 BYN</div>
+        </div>
+      </div>
+
+      <div class="profit-banner">
+        <div>
+          <div class="profit-text">Чистая выгода vs банкомат:</div>
+          <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">Банк дал бы: <span id="bank-byn-val">882.5 BYN</span></div>
+        </div>
+        <div class="profit-num" id="profit-val">+120.3 BYN 🔥</div>
+      </div>
+
+      <!-- Matched Offer Box with 1-Click Buy -->
+      <div class="matched-box" id="calc-match-box">
+        <div class="matched-header">🎯 Лучший продавец под эту сумму:</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <div>
+            <div style="font-size: 16px; font-weight: 800;" id="calc-match-name">Strict Ant</div>
+            <div style="font-size: 11px; color: var(--text-muted);" id="calc-match-limits">Лимиты: 10 000 – 45 000 ₽</div>
+          </div>
+          <div style="font-size: 18px; font-weight: 900; color: var(--accent-green);" id="calc-match-price">89.50 ₽</div>
+        </div>
+        <button type="button" class="btn-buy-direct" id="calc-buy-btn">
+          ⚡ Забрать эту сделку в 1 клик
+        </button>
       </div>
     </div>
+  </div>
 
-    <!-- Siren Repeats Row -->
-    <div class="settings-row">
-      <div class="settings-label">
-        <span>🚨 Повторов сирены</span>
-        <span class="curr" id="label-repeats">5 раз (реком.)</span>
+  <!-- ============================================================ -->
+  <!-- TAB 3: 🚨 РАДАР & НАСТРОЙКИ СИРЕНЫ                          -->
+  <!-- ============================================================ -->
+  <div id="tab-radar" class="tab-view">
+    <div class="card">
+      <div class="card-title">
+        <span>🚨 Настройки сирены и курса</span>
+        <span style="font-size: 11px; color: var(--accent-green);">⚡ 2 сек</span>
       </div>
-      <div class="chips-group" id="repeats-chips">
-        <button type="button" class="chip-btn" data-repeats="1">1 раз</button>
-        <button type="button" class="chip-btn" data-repeats="3">3 раза</button>
-        <button type="button" class="chip-btn active green-active" data-repeats="5">5 раз ⚡</button>
-        <button type="button" class="chip-btn" data-repeats="10">10 раз</button>
+
+      <!-- Target Price -->
+      <div class="settings-row">
+        <div class="settings-label">
+          <span>🎯 Порог срабатывания сирены</span>
+          <span class="curr" id="label-target">88.0 ₽</span>
+        </div>
+        <div class="chips-group" id="target-chips">
+          <button type="button" class="chip-btn" data-target="85.0">85.0 ₽</button>
+          <button type="button" class="chip-btn" data-target="87.0">87.0 ₽</button>
+          <button type="button" class="chip-btn active" data-target="88.0">88.0 ₽</button>
+          <button type="button" class="chip-btn" data-target="89.0">89.0 ₽</button>
+          <button type="button" class="chip-btn" data-target="90.0">90.0 ₽</button>
+          <button type="button" class="chip-btn" data-target="92.0">92.0 ₽</button>
+        </div>
       </div>
+
+      <!-- Siren Repeats -->
+      <div class="settings-row">
+        <div class="settings-label">
+          <span>🔔 Повторов сигнала сирены</span>
+          <span class="curr" id="label-repeats">5 раз (реком.)</span>
+        </div>
+        <div class="chips-group" id="repeats-chips">
+          <button type="button" class="chip-btn" data-repeats="1">1 раз</button>
+          <button type="button" class="chip-btn" data-repeats="3">3 раза</button>
+          <button type="button" class="chip-btn active green-active" data-repeats="5">5 раз ⚡</button>
+          <button type="button" class="chip-btn" data-repeats="10">10 раз</button>
+        </div>
+      </div>
+
+      <!-- Maker Rate -->
+      <div class="settings-row">
+        <div class="settings-label">
+          <span>⚡ Твой курс сдачи USDT в BYN</span>
+          <span class="curr" id="label-maker">3.59 BYN</span>
+        </div>
+        <div class="chips-group" id="maker-chips">
+          <button type="button" class="chip-btn" data-maker="3.55">3.55</button>
+          <button type="button" class="chip-btn active" data-maker="3.59">3.59</button>
+          <button type="button" class="chip-btn" data-maker="3.60">3.60</button>
+          <button type="button" class="chip-btn" data-maker="3.62">3.62</button>
+          <button type="button" class="chip-btn" data-maker="3.65">3.65</button>
+        </div>
+      </div>
+
+      <button type="button" class="apply-btn" id="save-settings-btn">
+        💾 Сохранить и применить в боте
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- TAB 4: 📊 АНАЛИТИКА СПРЕДОВ                                -->
+  <!-- ============================================================ -->
+  <div id="tab-analytics" class="tab-view">
+    <div class="card">
+      <div class="card-title">
+        <span>📈 Спреды: P2P vs Альфа-Банк</span>
+      </div>
+
+      <div class="results-grid">
+        <div class="res-box">
+          <div class="res-label">Банк (Альфа RUB ➔ BYN)</div>
+          <div class="res-val" id="analytics-bank-rate">0.0353</div>
+        </div>
+        <div class="res-box">
+          <div class="res-label">P2P Эффект (1 RUB ➔ BYN)</div>
+          <div class="res-val green" id="analytics-eff-rate">0.0401</div>
+        </div>
+      </div>
+
+      <div class="profit-banner" style="margin-top: 10px;">
+        <div class="profit-text">Чистая премия к банковскому курсу:</div>
+        <div class="profit-num" id="analytics-spread-pct">+13.6% 🔥</div>
+      </div>
+
+      <table class="table-box">
+        <thead>
+          <tr>
+            <th>Объем в месяц</th>
+            <th>Через банк</th>
+            <th>Через P2P</th>
+            <th>Чистый профит</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>25 000 ₽</td>
+            <td>882 BYN</td>
+            <td>1 002 BYN</td>
+            <td class="green">+120 BYN</td>
+          </tr>
+          <tr>
+            <td>50 000 ₽</td>
+            <td>1 765 BYN</td>
+            <td>2 005 BYN</td>
+            <td class="green">+240 BYN</td>
+          </tr>
+          <tr>
+            <td>100 000 ₽</td>
+            <td>3 530 BYN</td>
+            <td>4 011 BYN</td>
+            <td class="green">+481 BYN</td>
+          </tr>
+          <tr>
+            <td>200 000 ₽</td>
+            <td>7 060 BYN</td>
+            <td>8 022 BYN</td>
+            <td class="green">+962 BYN</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <!-- Maker Rate Row -->
-    <div class="settings-row" style="margin-bottom: 6px;">
-      <div class="settings-label">
-        <span>⚡ Твой курс сдачи USDT в BYN</span>
-        <span class="curr" id="label-maker">3.59 BYN</span>
+    <div class="card">
+      <div class="card-title">
+        <span>🛡️ Безопасность P2P в Беларуси</span>
       </div>
-      <div class="chips-group" id="maker-chips">
-        <button type="button" class="chip-btn" data-maker="3.55">3.55</button>
-        <button type="button" class="chip-btn active" data-maker="3.59">3.59</button>
-        <button type="button" class="chip-btn" data-maker="3.60">3.60</button>
-        <button type="button" class="chip-btn" data-maker="3.62">3.62</button>
-        <button type="button" class="chip-btn" data-maker="3.65">3.65</button>
+      <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+        • Принимай оплату в BYN только на свои карты (Альфа / ЕРИП).<br>
+        • Подтверждай получение USDT только после проверки реального баланса в мобильном банке.<br>
+        • Не указывай в назначении платежа слова «крипта», «USDT».<br>
+        • Для крупных сумм (от 2 000 BYN) используй официальные площадки Whitebird / Bynex.
       </div>
     </div>
+  </div>
 
-    <button type="button" class="apply-btn" id="save-settings-btn">
-      💾 Применить настройки в боте
+  <!-- ============================================================ -->
+  <!-- BOTTOM NAVIGATION BAR                                        -->
+  <!-- ============================================================ -->
+  <div class="bottom-bar">
+    <button type="button" class="nav-btn active" data-tab="tab-market">
+      <span class="icon">⚡</span>
+      <span>Стакан</span>
+    </button>
+    <button type="button" class="nav-btn" data-tab="tab-calc">
+      <span class="icon">🧮</span>
+      <span>Калькулятор</span>
+    </button>
+    <button type="button" class="nav-btn" data-tab="tab-radar">
+      <span class="icon">🚨</span>
+      <span>Радар</span>
+    </button>
+    <button type="button" class="nav-btn" data-tab="tab-analytics">
+      <span class="icon">📊</span>
+      <span>Спреды</span>
     </button>
   </div>
 
-  <!-- OFFERS LIST CARD -->
-  <div style="display: flex; justify-content: space-between; align-items: center; margin: 16px 0 10px;">
-    <span style="font-size: 14px; font-weight: 800;">📊 Продавцы ЮMoney</span>
-    <span id="refresh-btn" style="font-size: 12px; color: var(--accent-blue); font-weight: 700; cursor: pointer; padding: 4px 8px;">🔄 Обновить</span>
-  </div>
-
-  <div id="deals-list">
-    <!-- Rendered dynamically -->
-  </div>
-
-  <!-- WALLET P2P BUTTON -->
-  <button type="button" class="wallet-btn" id="open-wallet-btn">
-    ⚡ Открыть Wallet P2P (@wallet)
-  </button>
-
-  <div id="toast">✅ Настройки применены!</div>
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast">✅ Настройки успешно сохранены!</div>
 
   <script>
-    // Safe Telegram WebApp initialization
+    // --- TELEGRAM WEBAPP INIT ---
     let tg = null;
     try {
       if (window.Telegram && window.Telegram.WebApp) {
@@ -527,41 +928,13 @@
         tg.ready();
         tg.expand();
         try {
-          if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#0c1017');
-          if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#0c1017');
+          if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#080c13');
+          if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#080c13');
         } catch (e) {}
       }
     } catch (e) {
       console.warn('WebApp init warning:', e);
     }
-
-    // URL Params parsing
-    const urlParams = new URLSearchParams(window.location.search);
-    let targetPrice = parseFloat(urlParams.get('target')) || parseFloat(localStorage.getItem('targetPrice')) || 88.0;
-    let sirenRepeats = parseInt(urlParams.get('repeats')) || parseInt(localStorage.getItem('sirenRepeats')) || 5;
-    let makerRate = parseFloat(urlParams.get('maker')) || parseFloat(localStorage.getItem('makerRate')) || 3.59;
-    let currentAmount = 25000;
-
-    // Actual sample YooMoney orders
-    let merchants = [
-      { price: 89.79, name: 'Known Puma', deals: 42, rate: 98, min: 5000, max: 85000 },
-      { price: 91.25, name: 'Alexandertopalto', deals: 114, rate: 99, min: 10000, max: 90000 },
-      { price: 100.55, name: 'Known Mule', deals: 57, rate: 100, min: 9000, max: 99000 },
-      { price: 100.58, name: 'Large Seagull', deals: 89, rate: 97, min: 5000, max: 75000 },
-      { price: 100.59, name: 'Tidy Bee', deals: 63, rate: 96, min: 3000, max: 50000 }
-    ];
-
-    const input = document.getElementById('rub-input');
-    const slider = document.getElementById('rub-slider');
-    const usdtRes = document.getElementById('usdt-res');
-    const bynRes = document.getElementById('byn-res');
-    const profitVal = document.getElementById('profit-val');
-    const dealsList = document.getElementById('deals-list');
-    const rateBadge = document.getElementById('rate-badge');
-
-    const labelTarget = document.getElementById('label-target');
-    const labelRepeats = document.getElementById('label-repeats');
-    const labelMaker = document.getElementById('label-maker');
 
     function triggerHaptic(type) {
       try {
@@ -577,100 +950,329 @@
       const toast = document.getElementById('toast');
       if (msg) toast.innerText = msg;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2500);
+      setTimeout(() => toast.classList.remove('show'), 2400);
     }
 
-    function syncUIState() {
+    // --- DIRECT 1-CLICK WALLET DEAL URL GENERATOR ---
+    function makeWalletDealUrl(orderId, userId) {
+      if (!orderId || !userId) return 'https://t.me/wallet';
+      try {
+        const raw = 'operation=offer&ad' + orderId + '_' + userId;
+        const b64 = btoa(raw).replace(/=/g, '');
+        return 'https://t.me/wallet/start?startapp=v2-' + b64;
+      } catch (e) {
+        return 'https://t.me/wallet';
+      }
+    }
+
+    function openDealDirect(orderId, userId) {
+      triggerHaptic('impact');
+      const url = makeWalletDealUrl(orderId, userId);
+      if (tg && typeof tg.openTelegramLink === 'function') {
+        tg.openTelegramLink(url);
+      } else {
+        window.open(url, '_blank');
+      }
+    }
+
+    function copyDealLink(orderId, userId) {
+      triggerHaptic('selection');
+      const url = makeWalletDealUrl(orderId, userId);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+          showToast('📋 Ссылка на сделку скопирована!');
+        }).catch(() => fallbackCopy(url));
+      } else {
+        fallbackCopy(url);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const input = document.createElement('input');
+      input.value = text;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      showToast('📋 Ссылка на сделку скопирована!');
+    }
+
+    // --- STATE MANAGEMENT ---
+    const urlParams = new URLSearchParams(window.location.search);
+    let targetPrice = parseFloat(urlParams.get('target')) || parseFloat(localStorage.getItem('targetPrice')) || 88.0;
+    let sirenRepeats = parseInt(urlParams.get('repeats')) || parseInt(localStorage.getItem('sirenRepeats')) || 5;
+    let makerRate = parseFloat(urlParams.get('maker')) || parseFloat(localStorage.getItem('makerRate')) || 3.59;
+    let currentAmount = 25000;
+    let currentFilter = 'all';
+    const bankRate = 0.0353;
+
+    // Load Live Deals passed from bot URL query or fallback
+    let merchants = [
+      { id: '11136012085768', userId: 458279175340084, price: 89.50, name: 'Strict Ant', deals: 1, rate: 100, min: 37400, max: 37400, qty: 434.3 },
+      { id: '11098533754369', userId: 563819851677852, price: 90.30, name: 'Young Chameleon', deals: 17, rate: 100, min: 5000, max: 50000, qty: 587.5 },
+      { id: '10318235487237', userId: 35393455702271, price: 90.40, name: 'Tall Hawk', deals: 393, rate: 100, min: 2240, max: 2240, qty: 26.4 },
+      { id: '10825373231873', userId: 493421639139384, price: 90.45, name: 'Cute Antelope', deals: 42, rate: 98, min: 5000, max: 85000, qty: 350.0 },
+      { id: '11135892104512', userId: 524109832104921, price: 91.20, name: 'Alexandertopalto', deals: 114, rate: 99, min: 10000, max: 90000, qty: 650.0 },
+      { id: '10983412093841', userId: 394812039481230, price: 100.55, name: 'Known Mule', deals: 57, rate: 100, min: 9000, max: 99000, qty: 800.0 }
+    ];
+
+    if (urlParams.get('d')) {
+      try {
+        let b64Str = urlParams.get('d').replace(/-/g, '+').replace(/_/g, '/');
+        while (b64Str.length % 4) b64Str += '=';
+        const parsed = JSON.parse(atob(b64Str));
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          merchants = parsed.map(it => ({
+            id: it.i,
+            userId: it.u,
+            price: it.p,
+            name: it.n,
+            min: it.min,
+            max: it.max,
+            deals: it.d,
+            rate: it.r,
+            qty: it.q || 0
+          }));
+          localStorage.setItem('cached_p2p_deals', JSON.stringify(merchants));
+        }
+      } catch (e) {
+        console.warn('Error parsing deals from URL:', e);
+      }
+    } else if (localStorage.getItem('cached_p2p_deals')) {
+      try {
+        merchants = JSON.parse(localStorage.getItem('cached_p2p_deals'));
+      } catch (e) {}
+    }
+
+    // Sort by price
+    merchants.sort((a, b) => a.price - b.price);
+
+    // --- TAB SWITCHING ---
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        triggerHaptic('selection');
+        const targetTab = btn.getAttribute('data-tab');
+
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+        document.getElementById(targetTab).classList.add('active');
+      });
+    });
+
+    // --- RENDER ORDERBOOK (TAB 1) ---
+    function renderOrderbook() {
+      const container = document.getElementById('orderbook-list');
+      container.innerHTML = '';
+
+      let filtered = merchants.filter(m => {
+        if (currentFilter === '15k') return m.min <= 15000;
+        if (currentFilter === '30k') return m.min <= 40000 && m.max >= 15000;
+        if (currentFilter === '50k') return m.max >= 40000;
+        return true;
+      });
+
+      if (filtered.length === 0) filtered = merchants;
+
+      filtered.forEach(m => {
+        const isMatch = m.price <= targetPrice;
+        const item = document.createElement('div');
+        item.className = `deal-item ${isMatch ? 'target-match' : ''}`;
+
+        const initials = m.name.split(' ').map(x => x[0]).join('').substring(0, 2).toUpperCase();
+        const estUSDT = (25000 / m.price).toFixed(1);
+        const estBYN = ((25000 / m.price) * makerRate).toFixed(1);
+
+        item.innerHTML = `
+          <div class="deal-top">
+            <div class="deal-price-box">
+              <div class="deal-price">${m.price.toFixed(2)}</div>
+              <div class="deal-curr">₽ / USDT</div>
+            </div>
+            ${isMatch ? '<span class="tag-match">🎯 ЦЕЛЬ</span>' : '<span class="tag-match" style="background: rgba(41,182,246,0.12); color:#29b6f6; border-color: rgba(41,182,246,0.3);">🟢 ЮMONEY</span>'}
+          </div>
+
+          <div class="deal-user-row">
+            <div class="user-avatar">${initials}</div>
+            <div class="user-name">${m.name}</div>
+            <div class="user-stats">⭐ ${m.deals} сд · ${m.rate}%</div>
+          </div>
+
+          <div class="deal-meta-grid">
+            <div class="meta-col">
+              <div class="lbl">Лимиты в рублях</div>
+              <div class="val">${m.min.toLocaleString()} – ${m.max.toLocaleString()} ₽</div>
+            </div>
+            <div class="meta-col">
+              <div class="lbl">Доступно к выкупу</div>
+              <div class="val">${m.qty ? m.qty.toLocaleString() : '—'} USDT</div>
+            </div>
+          </div>
+
+          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
+            💡 На 25 000 ₽: <b style="color: #fff;">${estUSDT} USDT</b> ➔ <b style="color: var(--accent-green);">~${estBYN} BYN</b>
+          </div>
+
+          <div class="deal-actions">
+            <button type="button" class="btn-buy-direct" onclick="openDealDirect('${m.id}', ${m.userId})">
+              ⚡ Купить в 1 клик
+            </button>
+            <button type="button" class="btn-copy-link" onclick="copyDealLink('${m.id}', ${m.userId})" title="Скопировать ссылку">
+              🔗
+            </button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // --- FILTER PILLS ---
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        triggerHaptic('selection');
+        document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.getAttribute('data-filter');
+        renderOrderbook();
+      });
+    });
+
+    // --- CALCULATOR (TAB 2) ---
+    const input = document.getElementById('rub-input');
+    const slider = document.getElementById('rub-slider');
+    const usdtRes = document.getElementById('usdt-res');
+    const bynRes = document.getElementById('byn-res');
+    const profitVal = document.getElementById('profit-val');
+    const bankBynVal = document.getElementById('bank-byn-val');
+    const calcBestRate = document.getElementById('calc-best-rate');
+    const rateTicker = document.getElementById('rate-ticker');
+
+    const matchBox = document.getElementById('calc-match-box');
+    const matchName = document.getElementById('calc-match-name');
+    const matchLimits = document.getElementById('calc-match-limits');
+    const matchPrice = document.getElementById('calc-match-price');
+    const matchBuyBtn = document.getElementById('calc-buy-btn');
+
+    function updateCalculator() {
+      const amt = currentAmount > 0 ? currentAmount : 25000;
+
+      // Find matching deal
+      const matching = merchants.filter(m => (m.min <= amt && m.max >= amt));
+      const best = matching.length > 0 ? matching[0] : (merchants[0] || { price: 89.5, name: 'Wallet P2P', min: 1000, max: 100000 });
+
+      const price = best.price;
+      const usdt = amt / price;
+      const byn = usdt * makerRate;
+      const bankBYN = amt * bankRate;
+      const profit = Math.max(0, byn - bankBYN);
+      const profitPct = ((byn / bankBYN) - 1) * 100;
+
+      usdtRes.innerText = `${usdt.toFixed(1)} USDT`;
+      bynRes.innerText = `~${byn.toFixed(1)} BYN`;
+      bankBynVal.innerText = `${bankBYN.toFixed(1)} BYN`;
+      profitVal.innerText = `+${profit.toFixed(1)} BYN (+${profitPct.toFixed(1)}%) 🔥`;
+      calcBestRate.innerText = `Курс: ${price.toFixed(2)} ₽`;
+      rateTicker.innerText = `Лучший: ${merchants[0].price.toFixed(2)} ₽`;
+
+      // Matched offer
+      matchName.innerText = `${best.name} (${best.deals} сд, ${best.rate}%)`;
+      matchLimits.innerText = `Лимиты: ${best.min.toLocaleString()} – ${best.max.toLocaleString()} ₽`;
+      matchPrice.innerText = `${price.toFixed(2)} ₽`;
+      matchBuyBtn.onclick = () => openDealDirect(best.id, best.userId);
+
+      // Analytics tab
+      document.getElementById('analytics-bank-rate').innerText = bankRate.toFixed(4) + ' BYN';
+      const effP2P = (1 / price) * makerRate;
+      document.getElementById('analytics-eff-rate').innerText = effP2P.toFixed(4) + ' BYN';
+      document.getElementById('analytics-spread-pct').innerText = `+${profitPct.toFixed(1)}% чистыми`;
+    }
+
+    // Amount chips
+    document.querySelectorAll('#amount-chips .chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        triggerHaptic('selection');
+        const val = parseFloat(btn.getAttribute('data-val'));
+        currentAmount = val;
+        input.value = val;
+        slider.value = Math.min(val, 100000);
+
+        document.querySelectorAll('#amount-chips .chip-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updateCalculator();
+      });
+    });
+
+    input.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value) || 0;
+      currentAmount = val;
+      slider.value = Math.min(val, 100000);
+      document.querySelectorAll('#amount-chips .chip-btn').forEach(b => b.classList.remove('active'));
+      updateCalculator();
+    });
+
+    slider.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value) || 0;
+      currentAmount = val;
+      input.value = val;
+      document.querySelectorAll('#amount-chips .chip-btn').forEach(b => b.classList.remove('active'));
+      updateCalculator();
+    });
+
+    // --- RADAR SETTINGS (TAB 3) ---
+    const labelTarget = document.getElementById('label-target');
+    const labelRepeats = document.getElementById('label-repeats');
+    const labelMaker = document.getElementById('label-maker');
+
+    function syncSettingsUI() {
       labelTarget.innerText = `${targetPrice.toFixed(1)} ₽`;
       labelRepeats.innerText = `${sirenRepeats} раз`;
       labelMaker.innerText = `${makerRate.toFixed(2)} BYN`;
 
-      // Update target chips
+      // Target chips
       document.querySelectorAll('#target-chips .chip-btn').forEach(btn => {
         const val = parseFloat(btn.getAttribute('data-target'));
         btn.classList.toggle('active', Math.abs(val - targetPrice) < 0.05);
       });
 
-      // Update repeats chips
+      // Repeats chips
       document.querySelectorAll('#repeats-chips .chip-btn').forEach(btn => {
         const val = parseInt(btn.getAttribute('data-repeats'));
         btn.classList.toggle('active', val === sirenRepeats);
       });
 
-      // Update maker chips
+      // Maker chips
       document.querySelectorAll('#maker-chips .chip-btn').forEach(btn => {
         const val = parseFloat(btn.getAttribute('data-maker'));
         btn.classList.toggle('active', Math.abs(val - makerRate) < 0.02);
       });
     }
 
-    function updateCalc() {
-      const amt = currentAmount > 0 ? currentAmount : 25000;
-      
-      const matching = merchants.filter(m => (currentAmount === 0) || (m.min <= currentAmount && m.max >= currentAmount));
-      const bestDeal = matching.length > 0 ? matching[0] : (merchants[0] || { price: 89.8 });
-      const bestPrice = bestDeal.price;
-
-      rateBadge.innerText = `Лучший: ${bestPrice.toFixed(2)} ₽`;
-
-      const usdt = amt / bestPrice;
-      const byn = usdt * makerRate;
-      
-      // Сравнение с банком (Альфа ~0.0353)
-      const bankBYN = amt * 0.0353;
-      const profit = Math.max(0, byn - bankBYN);
-
-      usdtRes.innerText = `${usdt.toFixed(1)} USDT`;
-      bynRes.innerText = `~${byn.toFixed(1)} BYN`;
-      profitVal.innerText = `+${profit.toFixed(0)} BYN 🔥`;
-
-      renderDeals();
-    }
-
-    function renderDeals() {
-      dealsList.innerHTML = '';
-      merchants.forEach(m => {
-        const isMatch = (currentAmount === 0) || (m.min <= currentAmount && m.max >= currentAmount);
-        const isUnderTarget = m.price <= targetPrice;
-
-        const card = document.createElement('div');
-        card.className = `deal-card ${isUnderTarget ? 'highlight' : ''}`;
-        
-        card.innerHTML = `
-          <div>
-            <div class="deal-price">
-              ${m.price.toFixed(2)} ₽
-              ${isUnderTarget ? '<span class="deal-tag">🎯 ЦЕЛЬ</span>' : '<span class="deal-tag">🟢 ЮMoney</span>'}
-            </div>
-            <div class="deal-merchant">👤 ${m.name} (${m.deals} сдел., ${m.rate}%)</div>
-            <div class="deal-limits">Лимиты: ${m.min.toLocaleString()} – ${m.max.toLocaleString()} ₽</div>
-          </div>
-          <div>
-            <button type="button" class="deal-buy-btn">
-              Купить
-            </button>
-          </div>
-        `;
-        dealsList.appendChild(card);
+    document.querySelectorAll('#target-chips .chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        triggerHaptic('selection');
+        targetPrice = parseFloat(btn.getAttribute('data-target'));
+        syncSettingsUI();
+        renderOrderbook();
       });
+    });
 
-      // Bind buy buttons
-      document.querySelectorAll('.deal-buy-btn').forEach(b => {
-        b.addEventListener('click', (e) => {
-          e.preventDefault();
-          openWallet();
-        });
+    document.querySelectorAll('#repeats-chips .chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        triggerHaptic('selection');
+        sirenRepeats = parseInt(btn.getAttribute('data-repeats'));
+        syncSettingsUI();
       });
-    }
+    });
 
-    function openWallet() {
-      triggerHaptic('impact');
-      if (tg && typeof tg.openTelegramLink === 'function') {
-        tg.openTelegramLink('https://t.me/wallet');
-      } else {
-        window.open('https://t.me/wallet', '_blank');
-      }
-    }
+    document.querySelectorAll('#maker-chips .chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        triggerHaptic('selection');
+        makerRate = parseFloat(btn.getAttribute('data-maker'));
+        syncSettingsUI();
+        updateCalculator();
+      });
+    });
 
     function saveSettingsToBot() {
       triggerHaptic('success');
@@ -692,7 +1294,7 @@
           sent = true;
         }
       } catch (e) {
-        console.warn('sendData failed:', e);
+        console.warn('sendData error:', e);
       }
 
       if (!sent) {
@@ -704,84 +1306,15 @@
         }
       }
 
-      showToast('✅ Настройки применены!');
+      showToast('✅ Настройки сохранены в боте!');
     }
 
-    // --- EVENT LISTENERS ---
-
-    // Amount Chips
-    document.querySelectorAll('#amount-chips .chip-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        triggerHaptic('selection');
-        const val = parseFloat(btn.getAttribute('data-val'));
-        currentAmount = val;
-        input.value = val > 0 ? val : '';
-        if (val > 0) slider.value = Math.min(val, 100000);
-
-        document.querySelectorAll('#amount-chips .chip-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        updateCalc();
-      });
-    });
-
-    // Target Chips
-    document.querySelectorAll('#target-chips .chip-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        triggerHaptic('selection');
-        targetPrice = parseFloat(btn.getAttribute('data-target'));
-        syncUIState();
-        renderDeals();
-      });
-    });
-
-    // Repeats Chips
-    document.querySelectorAll('#repeats-chips .chip-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        triggerHaptic('selection');
-        sirenRepeats = parseInt(btn.getAttribute('data-repeats'));
-        syncUIState();
-      });
-    });
-
-    // Maker Chips
-    document.querySelectorAll('#maker-chips .chip-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        triggerHaptic('selection');
-        makerRate = parseFloat(btn.getAttribute('data-maker'));
-        syncUIState();
-        updateCalc();
-      });
-    });
-
-    // Input handlers
-    input.addEventListener('input', (e) => {
-      const val = parseFloat(e.target.value) || 0;
-      currentAmount = val;
-      slider.value = Math.min(val, 100000);
-      document.querySelectorAll('#amount-chips .chip-btn').forEach(b => b.classList.remove('active'));
-      updateCalc();
-    });
-
-    slider.addEventListener('input', (e) => {
-      const val = parseFloat(e.target.value) || 0;
-      currentAmount = val;
-      input.value = val;
-      document.querySelectorAll('#amount-chips .chip-btn').forEach(b => b.classList.remove('active'));
-      updateCalc();
-    });
-
-    // Buttons
     document.getElementById('save-settings-btn').addEventListener('click', saveSettingsToBot);
-    document.getElementById('open-wallet-btn').addEventListener('click', openWallet);
-    document.getElementById('refresh-btn').addEventListener('click', () => {
-      triggerHaptic('success');
-      showToast('🔄 Стакан обновлен!');
-      updateCalc();
-    });
 
-    // Init
-    syncUIState();
-    updateCalc();
+    // Initial Render
+    syncSettingsUI();
+    renderOrderbook();
+    updateCalculator();
   </script>
 </body>
 </html>
