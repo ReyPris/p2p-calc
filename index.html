@@ -1080,21 +1080,22 @@
             deals: it.d,
             rate: it.r,
             qty: it.q || 0
-          })).filter(it => !['savvy seagull', 'able seagull', 'bold croc', 'groovy bull'].includes(it.name.toLowerCase()));
+          })).filter(it => !['savvy seagull', 'able seagull', 'bold croc', 'groovy bull', 'alexandertopalto'].includes(it.name.toLowerCase()));
           if (fresh.length > 0) {
             merchants = fresh;
-            localStorage.setItem('cached_yoomoney_deals_v3', JSON.stringify(merchants));
+            localStorage.setItem('cached_yoomoney_deals_v4', JSON.stringify(merchants));
           }
         }
       } catch (e) {}
-    } else if (localStorage.getItem('cached_yoomoney_deals_v3')) {
+    } else if (localStorage.getItem('cached_yoomoney_deals_v4')) {
       try {
-        const stored = JSON.parse(localStorage.getItem('cached_yoomoney_deals_v3'));
-        const valid = stored.filter(it => !['savvy seagull', 'able seagull', 'bold croc'].includes(it.name.toLowerCase()));
+        const stored = JSON.parse(localStorage.getItem('cached_yoomoney_deals_v4'));
+        const valid = stored.filter(it => !['savvy seagull', 'able seagull', 'bold croc', 'alexandertopalto'].includes(it.name.toLowerCase()));
         if (valid.length > 0) merchants = valid;
       } catch (e) {}
     }
     localStorage.removeItem('cached_p2p_deals');
+    localStorage.removeItem('cached_yoomoney_deals_v3');
 
     merchants.sort((a, b) => a.price - b.price);
 
