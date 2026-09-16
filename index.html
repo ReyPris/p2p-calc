@@ -1070,7 +1070,7 @@
         while (b64Str.length % 4) b64Str += '=';
         const parsed = JSON.parse(atob(b64Str));
         if (Array.isArray(parsed) && parsed.length > 0) {
-          merchants = parsed.map(it => ({
+          const fresh = parsed.map(it => ({
             id: it.i,
             userId: it.u,
             price: it.p,
@@ -1080,15 +1080,21 @@
             deals: it.d,
             rate: it.r,
             qty: it.q || 0
-          }));
-          localStorage.setItem('cached_p2p_deals', JSON.stringify(merchants));
+          })).filter(it => !['savvy seagull', 'able seagull', 'bold croc', 'groovy bull'].includes(it.name.toLowerCase()));
+          if (fresh.length > 0) {
+            merchants = fresh;
+            localStorage.setItem('cached_yoomoney_deals_v3', JSON.stringify(merchants));
+          }
         }
       } catch (e) {}
-    } else if (localStorage.getItem('cached_p2p_deals')) {
+    } else if (localStorage.getItem('cached_yoomoney_deals_v3')) {
       try {
-        merchants = JSON.parse(localStorage.getItem('cached_p2p_deals'));
+        const stored = JSON.parse(localStorage.getItem('cached_yoomoney_deals_v3'));
+        const valid = stored.filter(it => !['savvy seagull', 'able seagull', 'bold croc'].includes(it.name.toLowerCase()));
+        if (valid.length > 0) merchants = valid;
       } catch (e) {}
     }
+    localStorage.removeItem('cached_p2p_deals');
 
     merchants.sort((a, b) => a.price - b.price);
 
