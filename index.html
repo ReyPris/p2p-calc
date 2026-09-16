@@ -5,39 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>ЮMoney P2P Pro Terminal</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-color: #080c13;
-      --card-bg: #121924;
-      --card-border: #1c2637;
-      --card-hover: #16202f;
-      --accent-green: #00e676;
-      --accent-green-bg: rgba(0, 230, 118, 0.12);
-      --accent-blue: #29b6f6;
-      --accent-blue-bg: rgba(41, 182, 246, 0.12);
-      --accent-gold: #ffb300;
-      --accent-gold-bg: rgba(255, 179, 0, 0.12);
-      --text-main: #ffffff;
-      --text-muted: #8493a8;
-      --text-sub: #54657a;
-      --danger: #ff5252;
-      --bottom-bar-height: 68px;
+      --bg-color: #06090e;
+      --card-bg: rgba(14, 21, 32, 0.85);
+      --card-border: rgba(36, 52, 77, 0.7);
+      --card-hover: rgba(22, 33, 50, 0.95);
+      --accent-green: #00f076;
+      --accent-green-glow: rgba(0, 240, 118, 0.35);
+      --accent-green-bg: rgba(0, 240, 118, 0.12);
+      --accent-blue: #00b0ff;
+      --accent-blue-glow: rgba(0, 176, 255, 0.35);
+      --accent-blue-bg: rgba(0, 176, 255, 0.12);
+      --accent-gold: #ffb703;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-sub: #64748b;
+      --danger: #ff4757;
+      --bottom-bar-height: 72px;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
     }
 
     body {
       background: var(--bg-color);
+      background-image: 
+        radial-gradient(circle at 15% 10%, rgba(0, 176, 255, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 30%, rgba(0, 240, 118, 0.08) 0%, transparent 40%),
+        linear-gradient(180deg, #070c14 0%, #05080c 100%);
+      background-attachment: fixed;
       color: var(--text-main);
-      padding: 14px;
-      padding-bottom: calc(var(--bottom-bar-height) + 20px);
+      padding: 16px;
+      padding-bottom: calc(var(--bottom-bar-height) + 24px);
       user-select: none;
       -webkit-user-select: none;
       min-height: 100vh;
@@ -49,109 +58,126 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
       padding: 2px 2px;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #00b0ff, #00f076);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      box-shadow: 0 0 16px rgba(0, 240, 118, 0.35);
     }
 
     .brand-title {
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: -0.3px;
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: -0.4px;
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
     .badge-pro {
-      font-size: 10px;
-      font-weight: 800;
+      font-size: 9px;
+      font-weight: 900;
       padding: 3px 6px;
       border-radius: 6px;
-      background: linear-gradient(135deg, #00e676, #00b0ff);
-      color: #05080e;
+      background: linear-gradient(135deg, #00f076, #00b0ff);
+      color: #04080f;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
     }
 
     .header-status {
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 11px;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: 800;
       color: var(--accent-green);
       background: var(--accent-green-bg);
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 20px;
-      border: 1px solid rgba(0, 230, 118, 0.25);
+      border: 1px solid rgba(0, 240, 118, 0.25);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
 
     .status-dot {
-      width: 6px;
-      height: 6px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: var(--accent-green);
-      box-shadow: 0 0 8px var(--accent-green);
-      animation: pulse 1.8s infinite;
+      box-shadow: 0 0 10px var(--accent-green);
+      animation: pulse 1.6s infinite;
     }
 
     @keyframes pulse {
-      0% { opacity: 0.4; transform: scale(0.9); }
-      50% { opacity: 1; transform: scale(1.15); }
-      100% { opacity: 0.4; transform: scale(0.9); }
+      0% { opacity: 0.4; transform: scale(0.85); }
+      50% { opacity: 1; transform: scale(1.2); }
+      100% { opacity: 0.4; transform: scale(0.85); }
     }
 
-    /* TABS CONTENT CONTAINER */
+    /* TABS VIEW CONTAINER */
     .tab-view {
       display: none;
-      animation: fadeIn 0.2s ease;
+      animation: tabFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .tab-view.active {
       display: block;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* COMMON CARDS */
+    /* CARD DESIGN */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 12px;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 14px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+      position: relative;
     }
 
     .card-title {
       font-size: 12px;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 12px;
-      font-weight: 700;
+      letter-spacing: 0.7px;
+      margin-bottom: 14px;
+      font-weight: 800;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    /* QUICK FILTER PILLS */
+    /* FILTER BAR */
     .filter-bar {
       display: flex;
-      gap: 6px;
+      gap: 8px;
       overflow-x: auto;
-      padding-bottom: 4px;
+      padding-bottom: 6px;
       scrollbar-width: none;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .filter-bar::-webkit-scrollbar {
@@ -159,40 +185,41 @@
     }
 
     .filter-pill {
-      background: #0d141e;
+      background: rgba(15, 23, 36, 0.7);
       border: 1px solid var(--card-border);
       color: var(--text-muted);
-      padding: 7px 12px;
-      border-radius: 10px;
+      padding: 8px 14px;
+      border-radius: 12px;
       font-size: 12px;
       font-weight: 700;
       white-space: nowrap;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .filter-pill.active {
-      background: var(--accent-blue);
+      background: linear-gradient(135deg, #00b0ff, #0088cc);
       color: #fff;
-      border-color: var(--accent-blue);
-      box-shadow: 0 0 12px rgba(41, 182, 246, 0.35);
+      border-color: #00b0ff;
+      box-shadow: 0 4px 14px rgba(0, 176, 255, 0.4);
     }
 
-    /* ORDERBOOK LIST */
+    /* ORDERBOOK DEALS */
     .deal-item {
-      background: var(--card-bg);
+      background: rgba(14, 21, 33, 0.9);
       border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 10px;
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 12px;
       transition: all 0.2s;
       position: relative;
       overflow: hidden;
     }
 
     .deal-item.target-match {
-      border-color: rgba(0, 230, 118, 0.45);
-      background: linear-gradient(180deg, #131d2b 0%, #0e1520 100%);
+      border-color: rgba(0, 240, 118, 0.4);
+      background: linear-gradient(180deg, rgba(16, 26, 40, 0.95) 0%, rgba(10, 18, 28, 0.95) 100%);
+      box-shadow: 0 0 24px rgba(0, 240, 118, 0.12);
     }
 
     .deal-item.target-match::before {
@@ -202,14 +229,14 @@
       top: 0;
       bottom: 0;
       width: 4px;
-      background: var(--accent-green);
+      background: linear-gradient(180deg, #00f076, #00b0ff);
     }
 
     .deal-top {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 8px;
+      align-items: center;
+      margin-bottom: 10px;
     }
 
     .deal-price-box {
@@ -219,7 +246,8 @@
     }
 
     .deal-price {
-      font-size: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 24px;
       font-weight: 900;
       letter-spacing: -0.5px;
       color: #fff;
@@ -227,98 +255,116 @@
 
     .deal-curr {
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text-muted);
     }
 
     .tag-match {
       font-size: 10px;
       font-weight: 800;
-      padding: 3px 6px;
-      border-radius: 6px;
+      padding: 4px 8px;
+      border-radius: 8px;
       background: var(--accent-green-bg);
       color: var(--accent-green);
-      border: 1px solid rgba(0, 230, 118, 0.3);
+      border: 1px solid rgba(0, 240, 118, 0.35);
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .deal-user-row {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
+      gap: 10px;
+      margin-bottom: 12px;
     }
 
     .user-avatar {
-      width: 22px;
-      height: 22px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
-      background: #1c2738;
+      background: linear-gradient(135deg, #1c2738, #2a3a52);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 800;
       color: var(--accent-blue);
+      border: 1px solid rgba(0, 176, 255, 0.3);
     }
 
     .user-name {
-      font-size: 13px;
-      font-weight: 700;
-      color: #e1e7f0;
+      font-size: 14px;
+      font-weight: 800;
+      color: #f1f5f9;
     }
 
     .user-stats {
       font-size: 11px;
+      font-weight: 700;
       color: var(--text-muted);
       margin-left: auto;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 3px 8px;
+      border-radius: 6px;
     }
 
     .deal-meta-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      background: #090e15;
-      padding: 9px 12px;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      border: 1px solid #141c29;
+      gap: 10px;
+      background: rgba(8, 13, 20, 0.7);
+      padding: 10px 14px;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
 
     .meta-col .lbl {
       font-size: 10px;
       color: var(--text-sub);
-      font-weight: 600;
-      margin-bottom: 2px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 3px;
     }
 
     .meta-col .val {
+      font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
       font-weight: 700;
-      color: #cfd8e3;
+      color: #e2e8f0;
+    }
+
+    .deal-estimate-line {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .deal-actions {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       align-items: center;
     }
 
     .btn-buy-direct {
       flex: 1;
-      background: linear-gradient(135deg, #00e676 0%, #00b05e 100%);
-      color: #04090f;
+      background: linear-gradient(135deg, #00f076 0%, #00b05e 100%);
+      color: #03080e;
       border: none;
-      padding: 11px 14px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 800;
+      padding: 13px 16px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 900;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      box-shadow: 0 4px 14px rgba(0, 230, 118, 0.35);
+      gap: 8px;
+      box-shadow: 0 4px 18px var(--accent-green-glow);
       transition: transform 0.1s, opacity 0.15s;
     }
 
@@ -328,17 +374,18 @@
     }
 
     .btn-copy-link {
-      background: #141d2a;
+      background: rgba(20, 29, 44, 0.9);
       border: 1px solid var(--card-border);
       color: var(--text-muted);
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 18px;
       cursor: pointer;
-      transition: transform 0.1s;
+      transition: transform 0.1s, border-color 0.15s, color 0.15s;
     }
 
     .btn-copy-link:active {
@@ -347,27 +394,29 @@
       color: var(--accent-blue);
     }
 
-    /* CALCULATOR STYLES */
+    /* CALCULATOR INPUTS */
     .input-wrapper {
       display: flex;
       align-items: center;
-      background: #090e15;
+      background: rgba(8, 13, 20, 0.85);
       border: 1.5px solid var(--card-border);
-      border-radius: 14px;
-      padding: 10px 14px;
-      margin-bottom: 12px;
-      transition: border-color 0.2s;
+      border-radius: 16px;
+      padding: 12px 18px;
+      margin-bottom: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     .input-wrapper:focus-within {
       border-color: var(--accent-blue);
+      box-shadow: 0 0 16px var(--accent-blue-glow);
     }
 
     .input-wrapper input {
       background: transparent;
       border: none;
       color: #fff;
-      font-size: 26px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 28px;
       font-weight: 800;
       width: 100%;
       outline: none;
@@ -376,40 +425,40 @@
     }
 
     .input-wrapper .currency {
-      font-size: 22px;
-      font-weight: 800;
+      font-size: 24px;
+      font-weight: 900;
       color: var(--accent-blue);
       margin-left: 8px;
     }
 
     .slider {
       width: 100%;
-      height: 6px;
-      border-radius: 3px;
-      background: #1e2a3b;
+      height: 8px;
+      border-radius: 4px;
+      background: #182230;
       outline: none;
       -webkit-appearance: none;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     .slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
-      background: var(--accent-green);
+      background: linear-gradient(135deg, #00f076, #00b0ff);
       cursor: pointer;
-      box-shadow: 0 0 12px rgba(0, 230, 118, 0.7);
+      box-shadow: 0 0 16px rgba(0, 240, 118, 0.8);
     }
 
     .chips-group {
       display: flex;
-      gap: 6px;
+      gap: 8px;
       overflow-x: auto;
       padding-bottom: 4px;
       scrollbar-width: none;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .chips-group::-webkit-scrollbar {
@@ -417,13 +466,13 @@
     }
 
     .chip-btn {
-      background: #0e1622;
+      background: rgba(14, 22, 33, 0.8);
       border: 1px solid var(--card-border);
       color: var(--text-muted);
-      padding: 8px 12px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 700;
+      padding: 9px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
       white-space: nowrap;
       cursor: pointer;
       transition: all 0.15s ease;
@@ -435,125 +484,137 @@
     }
 
     .chip-btn.active {
-      background: var(--accent-blue);
+      background: linear-gradient(135deg, #00b0ff, #0088cc);
       color: #fff;
-      border-color: var(--accent-blue);
-      box-shadow: 0 0 10px rgba(41, 182, 246, 0.4);
+      border-color: #00b0ff;
+      box-shadow: 0 0 14px var(--accent-blue-glow);
     }
 
     .chip-btn.green-active.active {
-      background: var(--accent-green);
-      color: #060b12;
-      border-color: var(--accent-green);
-      box-shadow: 0 0 10px rgba(0, 230, 118, 0.4);
+      background: linear-gradient(135deg, #00f076, #00b05e);
+      color: #03080e;
+      border-color: #00f076;
+      box-shadow: 0 0 14px var(--accent-green-glow);
     }
 
     .results-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .res-box {
-      background: #090e15;
+      background: rgba(8, 13, 20, 0.7);
       border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 12px;
+      border-radius: 14px;
+      padding: 14px;
     }
 
     .res-label {
       font-size: 11px;
       color: var(--text-muted);
       margin-bottom: 4px;
-      font-weight: 600;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
     }
 
     .res-val {
-      font-size: 18px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px;
       font-weight: 800;
       color: #fff;
     }
 
     .res-val.green {
       color: var(--accent-green);
+      text-shadow: 0 0 12px rgba(0, 240, 118, 0.3);
     }
 
     .profit-banner {
-      background: linear-gradient(135deg, rgba(0, 230, 118, 0.15) 0%, rgba(41, 182, 246, 0.15) 100%);
-      border: 1px solid rgba(0, 230, 118, 0.35);
-      border-radius: 14px;
-      padding: 14px;
-      margin-top: 12px;
+      background: linear-gradient(135deg, rgba(0, 240, 118, 0.16) 0%, rgba(0, 176, 255, 0.16) 100%);
+      border: 1.5px solid rgba(0, 240, 118, 0.4);
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 4px 24px rgba(0, 240, 118, 0.15);
     }
 
     .profit-text {
-      font-size: 12px;
-      color: #e2e8f0;
-      font-weight: 700;
+      font-size: 13px;
+      color: #f1f5f9;
+      font-weight: 800;
     }
 
     .profit-num {
-      font-size: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
       font-weight: 900;
       color: var(--accent-green);
+      text-shadow: 0 0 10px rgba(0, 240, 118, 0.5);
     }
 
-    /* MATCHED DEAL BOX */
+    /* MATCHED OFFER CARD */
     .matched-box {
-      background: #0c131d;
-      border: 1px solid #1a2536;
-      border-radius: 14px;
-      padding: 12px 14px;
-      margin-top: 14px;
+      background: rgba(12, 19, 30, 0.95);
+      border: 1px solid rgba(0, 176, 255, 0.35);
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 16px;
+      box-shadow: 0 0 20px rgba(0, 176, 255, 0.12);
     }
 
     .matched-header {
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--accent-blue);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
+      letter-spacing: 0.6px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    /* SETTINGS / RADAR */
+    /* SETTINGS ROWS */
     .settings-row {
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     .settings-label {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--text-muted);
-      font-weight: 700;
-      margin-bottom: 6px;
+      font-weight: 800;
+      margin-bottom: 8px;
       display: flex;
       justify-content: space-between;
     }
 
     .settings-label span.curr {
       color: var(--accent-blue);
+      font-family: 'JetBrains Mono', monospace;
     }
 
     .apply-btn {
-      background: linear-gradient(135deg, #00e676 0%, #00b05e 100%);
-      color: #04090f;
+      background: linear-gradient(135deg, #00f076 0%, #00b05e 100%);
+      color: #03080e;
       border: none;
       width: 100%;
-      padding: 14px;
-      border-radius: 14px;
+      padding: 15px;
+      border-radius: 16px;
       font-size: 15px;
-      font-weight: 800;
+      font-weight: 900;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 8px;
-      margin-top: 16px;
-      box-shadow: 0 4px 16px rgba(0, 230, 118, 0.4);
+      margin-top: 18px;
+      box-shadow: 0 6px 24px var(--accent-green-glow);
       transition: transform 0.1s;
     }
 
@@ -565,45 +626,46 @@
     .table-box {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .table-box th {
       text-align: left;
       font-size: 11px;
       color: var(--text-sub);
-      padding: 8px 6px;
+      padding: 10px 8px;
       border-bottom: 1px solid var(--card-border);
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
     }
 
     .table-box td {
-      padding: 10px 6px;
-      border-bottom: 1px solid #141c29;
+      padding: 12px 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
       font-size: 13px;
       font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
     }
 
     .table-box td.green {
       color: var(--accent-green);
     }
 
-    /* BOTTOM NAVIGATION BAR */
+    /* BOTTOM NAV BAR */
     .bottom-bar {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
       height: var(--bottom-bar-height);
-      background: rgba(12, 16, 24, 0.95);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid #1c2738;
+      background: rgba(8, 12, 18, 0.96);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid rgba(36, 52, 77, 0.8);
       display: flex;
       justify-content: space-around;
       align-items: center;
-      padding: 0 10px;
+      padding: 0 12px;
       z-index: 999;
     }
 
@@ -616,15 +678,16 @@
       align-items: center;
       gap: 4px;
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
-      transition: all 0.15s ease;
-      padding: 6px 12px;
-      border-radius: 12px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 8px 14px;
+      border-radius: 14px;
     }
 
     .nav-btn .icon {
-      font-size: 18px;
+      font-size: 20px;
+      transition: transform 0.2s;
     }
 
     .nav-btn.active {
@@ -632,28 +695,28 @@
     }
 
     .nav-btn.active .icon {
-      transform: scale(1.15);
+      transform: translateY(-2px) scale(1.15);
     }
 
     /* TOAST */
     #toast {
       position: fixed;
-      top: 16px;
+      top: 18px;
       left: 50%;
       transform: translateX(-50%) translateY(-100px);
-      background: #00e676;
-      color: #04090f;
-      font-weight: 800;
-      padding: 10px 20px;
+      background: #00f076;
+      color: #03080e;
+      font-weight: 900;
+      padding: 12px 24px;
       border-radius: 30px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 8px 30px rgba(0, 240, 118, 0.5);
       z-index: 9999;
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       font-size: 13px;
       pointer-events: none;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     #toast.show {
@@ -666,14 +729,15 @@
   <!-- TOP HEADER -->
   <div class="top-header">
     <div class="brand">
+      <div class="brand-logo">⚡</div>
       <div class="brand-title">
-        <span>⚡ YooMoney P2P</span>
+        <span>YooMoney P2P</span>
         <span class="badge-pro">PRO</span>
       </div>
     </div>
     <div class="header-status">
       <div class="status-dot"></div>
-      <span id="rate-ticker">~89.5 ₽</span>
+      <span id="rate-ticker">~90.3 ₽</span>
     </div>
   </div>
 
@@ -681,7 +745,7 @@
   <!-- TAB 1: ⚡ СТАКАН P2P (LIVE ORDERBOOK)                          -->
   <!-- ============================================================ -->
   <div id="tab-market" class="tab-view active">
-    <!-- Filter Pills -->
+    <!-- Quick filter pills -->
     <div class="filter-bar">
       <button type="button" class="filter-pill active" data-filter="all">Все ордера</button>
       <button type="button" class="filter-pill" data-filter="15k">до 15 000 ₽</button>
@@ -689,9 +753,9 @@
       <button type="button" class="filter-pill" data-filter="50k">от 40 000 ₽</button>
     </div>
 
-    <!-- Live Deals List -->
+    <!-- Live Orders List -->
     <div id="orderbook-list">
-      <!-- Injected via JavaScript -->
+      <!-- Rendered dynamically -->
     </div>
   </div>
 
@@ -701,8 +765,8 @@
   <div id="tab-calc" class="tab-view">
     <div class="card">
       <div class="card-title">
-        <span>💰 Сумма вывода из ЮMoney</span>
-        <span id="calc-best-rate" style="color: var(--accent-blue); font-size: 11px;">Курс: ~89.5 ₽</span>
+        <span>💰 Сумма вывода с ЮMoney</span>
+        <span id="calc-best-rate" style="color: var(--accent-blue); font-size: 11px;">Курс: ~90.3 ₽</span>
       </div>
 
       <div class="input-wrapper">
@@ -724,31 +788,31 @@
       <div class="results-grid">
         <div class="res-box">
           <div class="res-label">Вы получите USDT</div>
-          <div class="res-val" id="usdt-res">279.3 USDT</div>
+          <div class="res-val" id="usdt-res">276.8 USDT</div>
         </div>
         <div class="res-box">
           <div class="res-label">На карту в Альфу (BYN)</div>
-          <div class="res-val green" id="byn-res">~1 002.8 BYN</div>
+          <div class="res-val green" id="byn-res">~993.7 BYN</div>
         </div>
       </div>
 
       <div class="profit-banner">
         <div>
           <div class="profit-text">Чистая выгода vs банкомат:</div>
-          <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">Банк дал бы: <span id="bank-byn-val">882.5 BYN</span></div>
+          <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Банк дал бы: <span id="bank-byn-val">882.5 BYN</span></div>
         </div>
-        <div class="profit-num" id="profit-val">+120.3 BYN 🔥</div>
+        <div class="profit-num" id="profit-val">+111.2 BYN 🔥</div>
       </div>
 
-      <!-- Matched Offer Box with 1-Click Buy -->
+      <!-- Auto-Matched Offer with 1-Click Buy -->
       <div class="matched-box" id="calc-match-box">
         <div class="matched-header">🎯 Лучший продавец под эту сумму:</div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <div>
-            <div style="font-size: 16px; font-weight: 800;" id="calc-match-name">Strict Ant</div>
-            <div style="font-size: 11px; color: var(--text-muted);" id="calc-match-limits">Лимиты: 10 000 – 45 000 ₽</div>
+            <div style="font-size: 16px; font-weight: 800;" id="calc-match-name">Young Chameleon</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" id="calc-match-limits">Лимиты: 5 000 – 50 000 ₽</div>
           </div>
-          <div style="font-size: 18px; font-weight: 900; color: var(--accent-green);" id="calc-match-price">89.50 ₽</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 900; color: var(--accent-green);" id="calc-match-price">90.30 ₽</div>
         </div>
         <button type="button" class="btn-buy-direct" id="calc-buy-btn">
           ⚡ Забрать эту сделку в 1 клик
@@ -758,13 +822,13 @@
   </div>
 
   <!-- ============================================================ -->
-  <!-- TAB 3: 🚨 РАДАР & НАСТРОЙКИ СИРЕНЫ                          -->
+  <!-- TAB 3: 🚨 РАДАР & СИРЕНА                                     -->
   <!-- ============================================================ -->
   <div id="tab-radar" class="tab-view">
     <div class="card">
       <div class="card-title">
         <span>🚨 Настройки сирены и курса</span>
-        <span style="font-size: 11px; color: var(--accent-green);">⚡ 2 сек</span>
+        <span style="font-size: 11px; color: var(--accent-green); font-weight: 800;">⚡ 2 сек</span>
       </div>
 
       <!-- Target Price -->
@@ -834,13 +898,13 @@
         </div>
         <div class="res-box">
           <div class="res-label">P2P Эффект (1 RUB ➔ BYN)</div>
-          <div class="res-val green" id="analytics-eff-rate">0.0401</div>
+          <div class="res-val green" id="analytics-eff-rate">0.0398</div>
         </div>
       </div>
 
-      <div class="profit-banner" style="margin-top: 10px;">
+      <div class="profit-banner" style="margin-top: 12px;">
         <div class="profit-text">Чистая премия к банковскому курсу:</div>
-        <div class="profit-num" id="analytics-spread-pct">+13.6% 🔥</div>
+        <div class="profit-num" id="analytics-spread-pct">+12.8% 🔥</div>
       </div>
 
       <table class="table-box">
@@ -856,26 +920,26 @@
           <tr>
             <td>25 000 ₽</td>
             <td>882 BYN</td>
-            <td>1 002 BYN</td>
-            <td class="green">+120 BYN</td>
+            <td>994 BYN</td>
+            <td class="green">+112 BYN</td>
           </tr>
           <tr>
             <td>50 000 ₽</td>
             <td>1 765 BYN</td>
-            <td>2 005 BYN</td>
-            <td class="green">+240 BYN</td>
+            <td>1 988 BYN</td>
+            <td class="green">+223 BYN</td>
           </tr>
           <tr>
             <td>100 000 ₽</td>
             <td>3 530 BYN</td>
-            <td>4 011 BYN</td>
-            <td class="green">+481 BYN</td>
+            <td>3 976 BYN</td>
+            <td class="green">+446 BYN</td>
           </tr>
           <tr>
             <td>200 000 ₽</td>
             <td>7 060 BYN</td>
-            <td>8 022 BYN</td>
-            <td class="green">+962 BYN</td>
+            <td>7 952 BYN</td>
+            <td class="green">+892 BYN</td>
           </tr>
         </tbody>
       </table>
@@ -885,11 +949,11 @@
       <div class="card-title">
         <span>🛡️ Безопасность P2P в Беларуси</span>
       </div>
-      <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
-        • Принимай оплату в BYN только на свои карты (Альфа / ЕРИП).<br>
+      <div style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+        • Принимай оплату в BYN только на свои карты (Альфа-Банк / ЕРИП).<br>
         • Подтверждай получение USDT только после проверки реального баланса в мобильном банке.<br>
-        • Не указывай в назначении платежа слова «крипта», «USDT».<br>
-        • Для крупных сумм (от 2 000 BYN) используй официальные площадки Whitebird / Bynex.
+        • Не указывай в комментариях к переводу слова «крипта», «USDT».<br>
+        • Для крупных объемов (от 2 000 BYN) используй официальные сервисы Whitebird / Bynex.
       </div>
     </div>
   </div>
@@ -917,7 +981,7 @@
   </div>
 
   <!-- TOAST NOTIFICATION -->
-  <div id="toast">✅ Настройки успешно сохранены!</div>
+  <div id="toast">✅ Настройки сохранены!</div>
 
   <script>
     // --- TELEGRAM WEBAPP INIT ---
@@ -928,8 +992,8 @@
         tg.ready();
         tg.expand();
         try {
-          if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#080c13');
-          if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#080c13');
+          if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#06090e');
+          if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#06090e');
         } catch (e) {}
       }
     } catch (e) {
@@ -955,7 +1019,7 @@
 
     // --- DIRECT 1-CLICK WALLET DEAL URL GENERATOR ---
     function makeWalletDealUrl(orderId, userId) {
-      if (!orderId || !userId) return 'https://t.me/wallet';
+      if (!orderId || !userId) return 'https://t.me/wallet/start?startapp=v2';
       try {
         const raw = 'operation=offer&ad' + orderId + '_' + userId;
         const b64 = btoa(raw).replace(/=/g, '');
@@ -1006,13 +1070,13 @@
     let currentFilter = 'all';
     const bankRate = 0.0353;
 
-    // Load Live Deals passed from bot URL query or fallback
+    // Live actual deals
     let merchants = [
-      { id: '11136012085768', userId: 458279175340084, price: 89.50, name: 'Strict Ant', deals: 1, rate: 100, min: 37400, max: 37400, qty: 434.3 },
-      { id: '11098533754369', userId: 563819851677852, price: 90.30, name: 'Young Chameleon', deals: 17, rate: 100, min: 5000, max: 50000, qty: 587.5 },
-      { id: '10318235487237', userId: 35393455702271, price: 90.40, name: 'Tall Hawk', deals: 393, rate: 100, min: 2240, max: 2240, qty: 26.4 },
-      { id: '10825373231873', userId: 493421639139384, price: 90.45, name: 'Cute Antelope', deals: 42, rate: 98, min: 5000, max: 85000, qty: 350.0 },
-      { id: '11135892104512', userId: 524109832104921, price: 91.20, name: 'Alexandertopalto', deals: 114, rate: 99, min: 10000, max: 90000, qty: 650.0 },
+      { id: '11098533754369', userId: 563819851677852, price: 90.30, name: 'Young Chameleon', deals: 19, rate: 100, min: 5000, max: 50000, qty: 587.5 },
+      { id: '10318168327170', userId: 35393455702271, price: 90.50, name: 'Tall Hawk', deals: 393, rate: 100, min: 1786, max: 25000, qty: 350.0 },
+      { id: '11136012085768', userId: 458279175340084, price: 90.80, name: 'Strict Ant', deals: 1, rate: 100, min: 10000, max: 30000, qty: 434.3 },
+      { id: '10825373231873', userId: 493421639139384, price: 91.20, name: 'Cute Antelope', deals: 42, rate: 98, min: 5000, max: 85000, qty: 350.0 },
+      { id: '11135892104512', userId: 524109832104921, price: 91.50, name: 'Alexandertopalto', deals: 114, rate: 99, min: 10000, max: 90000, qty: 650.0 },
       { id: '10983412093841', userId: 394812039481230, price: 100.55, name: 'Known Mule', deals: 57, rate: 100, min: 9000, max: 99000, qty: 800.0 }
     ];
 
@@ -1044,7 +1108,6 @@
       } catch (e) {}
     }
 
-    // Sort by price
     merchants.sort((a, b) => a.price - b.price);
 
     // --- TAB SWITCHING ---
@@ -1090,7 +1153,7 @@
               <div class="deal-price">${m.price.toFixed(2)}</div>
               <div class="deal-curr">₽ / USDT</div>
             </div>
-            ${isMatch ? '<span class="tag-match">🎯 ЦЕЛЬ</span>' : '<span class="tag-match" style="background: rgba(41,182,246,0.12); color:#29b6f6; border-color: rgba(41,182,246,0.3);">🟢 ЮMONEY</span>'}
+            ${isMatch ? '<span class="tag-match">🎯 ЦЕЛЬ</span>' : '<span class="tag-match" style="background: rgba(0,176,255,0.12); color:#00b0ff; border-color: rgba(0,176,255,0.3);">🟢 ЮMONEY</span>'}
           </div>
 
           <div class="deal-user-row">
@@ -1110,8 +1173,9 @@
             </div>
           </div>
 
-          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
-            💡 На 25 000 ₽: <b style="color: #fff;">${estUSDT} USDT</b> ➔ <b style="color: var(--accent-green);">~${estBYN} BYN</b>
+          <div class="deal-estimate-line">
+            <span>💡 На 25 000 ₽:</span>
+            <span><b style="color: #fff;">${estUSDT} USDT</b> ➔ <b style="color: var(--accent-green);">~${estBYN} BYN</b></span>
           </div>
 
           <div class="deal-actions">
@@ -1127,7 +1191,7 @@
       });
     }
 
-    // --- FILTER PILLS ---
+    // Filter pills
     document.querySelectorAll('.filter-pill').forEach(btn => {
       btn.addEventListener('click', () => {
         triggerHaptic('selection');
@@ -1148,7 +1212,6 @@
     const calcBestRate = document.getElementById('calc-best-rate');
     const rateTicker = document.getElementById('rate-ticker');
 
-    const matchBox = document.getElementById('calc-match-box');
     const matchName = document.getElementById('calc-match-name');
     const matchLimits = document.getElementById('calc-match-limits');
     const matchPrice = document.getElementById('calc-match-price');
@@ -1157,9 +1220,8 @@
     function updateCalculator() {
       const amt = currentAmount > 0 ? currentAmount : 25000;
 
-      // Find matching deal
       const matching = merchants.filter(m => (m.min <= amt && m.max >= amt));
-      const best = matching.length > 0 ? matching[0] : (merchants[0] || { price: 89.5, name: 'Wallet P2P', min: 1000, max: 100000 });
+      const best = matching.length > 0 ? matching[0] : (merchants[0] || { price: 90.3, name: 'Wallet P2P', min: 1000, max: 100000 });
 
       const price = best.price;
       const usdt = amt / price;
@@ -1175,20 +1237,18 @@
       calcBestRate.innerText = `Курс: ${price.toFixed(2)} ₽`;
       rateTicker.innerText = `Лучший: ${merchants[0].price.toFixed(2)} ₽`;
 
-      // Matched offer
       matchName.innerText = `${best.name} (${best.deals} сд, ${best.rate}%)`;
       matchLimits.innerText = `Лимиты: ${best.min.toLocaleString()} – ${best.max.toLocaleString()} ₽`;
       matchPrice.innerText = `${price.toFixed(2)} ₽`;
       matchBuyBtn.onclick = () => openDealDirect(best.id, best.userId);
 
-      // Analytics tab
+      // Analytics
       document.getElementById('analytics-bank-rate').innerText = bankRate.toFixed(4) + ' BYN';
       const effP2P = (1 / price) * makerRate;
       document.getElementById('analytics-eff-rate').innerText = effP2P.toFixed(4) + ' BYN';
       document.getElementById('analytics-spread-pct').innerText = `+${profitPct.toFixed(1)}% чистыми`;
     }
 
-    // Amount chips
     document.querySelectorAll('#amount-chips .chip-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         triggerHaptic('selection');
@@ -1229,19 +1289,16 @@
       labelRepeats.innerText = `${sirenRepeats} раз`;
       labelMaker.innerText = `${makerRate.toFixed(2)} BYN`;
 
-      // Target chips
       document.querySelectorAll('#target-chips .chip-btn').forEach(btn => {
         const val = parseFloat(btn.getAttribute('data-target'));
         btn.classList.toggle('active', Math.abs(val - targetPrice) < 0.05);
       });
 
-      // Repeats chips
       document.querySelectorAll('#repeats-chips .chip-btn').forEach(btn => {
         const val = parseInt(btn.getAttribute('data-repeats'));
         btn.classList.toggle('active', val === sirenRepeats);
       });
 
-      // Maker chips
       document.querySelectorAll('#maker-chips .chip-btn').forEach(btn => {
         const val = parseFloat(btn.getAttribute('data-maker'));
         btn.classList.toggle('active', Math.abs(val - makerRate) < 0.02);
@@ -1311,7 +1368,7 @@
 
     document.getElementById('save-settings-btn').addEventListener('click', saveSettingsToBot);
 
-    // Initial Render
+    // Initial render
     syncSettingsUI();
     renderOrderbook();
     updateCalculator();
