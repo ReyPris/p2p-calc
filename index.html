@@ -878,6 +878,9 @@
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         <span>Сохранить параметры в боте</span>
       </button>
+      <div style="margin-top: 12px; font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.4;">
+        Параметры также можно менять прямо в чате бота, просто написав число (например: <code style="color: var(--pastel-mint);">95</code>).
+      </div>
     </div>
   </div>
 
@@ -1349,16 +1352,15 @@
         }
       } catch (e) {}
 
-      if (!sent) {
-        const cmdUrl = `https://t.me/BeverlyHOT_bot?start=cfg_${targetPrice}_${sirenRepeats}_${makerRate}`;
-        if (tg && typeof tg.openTelegramLink === 'function') {
-          tg.openTelegramLink(cmdUrl);
-        } else {
-          window.location.href = cmdUrl;
+      if (sent) {
+        showToast('Параметры переданы в бот');
+      } else {
+        const cmd = `/target ${targetPrice.toFixed(1)}`;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(cmd);
         }
+        showToast('Для смены в боте напишите ' + targetPrice.toFixed(1) + ' в чат');
       }
-
-      showToast('Настройки сохранены в боте');
     }
 
     document.getElementById('save-settings-btn').addEventListener('click', saveSettingsToBot);
