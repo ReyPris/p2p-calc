@@ -738,9 +738,9 @@
     </div>
     <div class="filter-bar">
       <button type="button" class="filter-pill active" data-filter="all">Все ордера</button>
-      <button type="button" class="filter-pill" data-filter="15k">до 15 000 RUB</button>
-      <button type="button" class="filter-pill" data-filter="30k">15k – 40k RUB</button>
-      <button type="button" class="filter-pill" data-filter="50k">от 40 000 RUB</button>
+      <button type="button" class="filter-pill" data-filter="fit">В моем балансе</button>
+      <button type="button" class="filter-pill" data-filter="15k">до 15k RUB</button>
+      <button type="button" class="filter-pill" data-filter="50k">от 40k RUB</button>
     </div>
 
     <div id="orderbook-list">
@@ -762,19 +762,18 @@
       </div>
 
       <div class="input-wrapper">
-        <input type="number" id="rub-input" value="25000" step="1000" min="1000" max="200000">
+        <input type="number" id="rub-input" value="45000" step="1000" min="1000" max="500000">
         <span class="currency">RUB</span>
       </div>
 
-      <input type="range" class="slider" id="rub-slider" min="1000" max="100000" step="1000" value="25000">
+      <input type="range" class="slider" id="rub-slider" min="1000" max="100000" step="1000" value="45000">
 
       <div class="chips-group" id="amount-chips">
-        <button type="button" class="chip-btn" data-val="5000">5 000</button>
         <button type="button" class="chip-btn" data-val="10000">10 000</button>
-        <button type="button" class="chip-btn" data-val="15000">15 000</button>
-        <button type="button" class="chip-btn" data-val="20000">20 000</button>
-        <button type="button" class="chip-btn active" data-val="25000">25 000</button>
-        <button type="button" class="chip-btn" data-val="50000">50 000</button>
+        <button type="button" class="chip-btn" data-val="25000">25 000</button>
+        <button type="button" class="chip-btn active" data-val="45000">45 000</button>
+        <button type="button" class="chip-btn" data-val="70000">70 000</button>
+        <button type="button" class="chip-btn" data-val="100000">100 000</button>
       </div>
 
       <div class="calc-split-grid">
@@ -824,6 +823,27 @@
           <span>Параметры сигналов</span>
         </div>
         <span style="font-size: 11px; color: var(--pastel-mint); font-weight: 700;">Интервал: 2 сек</span>
+      </div>
+
+      <!-- User Balance / Deposit -->
+      <div class="settings-row">
+        <div class="settings-label">
+          <span>Мой баланс / Лимит сделки</span>
+          <span class="curr" id="label-balance">45 000 RUB</span>
+        </div>
+        <div class="input-wrapper" style="margin-bottom: 8px;">
+          <input type="number" id="balance-input" value="45000" step="1000" min="1000" max="500000" style="font-size: 15px; font-weight: 700;">
+          <span class="currency">RUB</span>
+        </div>
+        <div class="chips-group" id="balance-chips" style="grid-template-columns: repeat(4, 1fr);">
+          <button type="button" class="chip-btn" data-balance="25000">25k</button>
+          <button type="button" class="chip-btn active" data-balance="45000">45k</button>
+          <button type="button" class="chip-btn" data-balance="70000">70k</button>
+          <button type="button" class="chip-btn" data-balance="100000">100k</button>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">
+          Ордера с минимальным лимитом выше этой суммы не будут вызывать сигнал.
+        </div>
       </div>
 
       <!-- Target Price -->
@@ -1061,7 +1081,8 @@
     let targetPrice = parseFloat(urlParams.get('target')) || parseFloat(localStorage.getItem('targetPrice')) || 95.0;
     let sirenRepeats = parseInt(urlParams.get('repeats')) || parseInt(localStorage.getItem('sirenRepeats')) || 5;
     let makerRate = parseFloat(urlParams.get('maker')) || parseFloat(localStorage.getItem('makerRate')) || 3.59;
-    let currentAmount = 25000;
+    let userBalance = parseFloat(urlParams.get('balance')) || parseFloat(localStorage.getItem('userBalance')) || 45000.0;
+    let currentAmount = userBalance;
     let currentFilter = 'all';
     const bankRate = 0.0353;
 
@@ -1131,6 +1152,7 @@
       container.innerHTML = '';
 
       let filtered = merchants.filter(m => {
+        if (currentFilter === 'fit') return m.min <= userBalance;
         if (currentFilter === '15k') return m.min <= 15000;
         if (currentFilter === '30k') return m.min <= 40000 && m.max >= 15000;
         if (currentFilter === '50k') return m.max >= 40000;
@@ -1141,12 +1163,21 @@
 
       filtered.forEach(m => {
         const isMatch = m.price <= targetPrice;
+        const isOverBudget = m.min > userBalance;
         const item = document.createElement('div');
-        item.className = `deal-item ${isMatch ? 'target-match' : ''}`;
+        item.className = `deal-item ${isMatch && !isOverBudget ? 'target-match' : ''}`;
 
         const initials = m.name.split(' ').map(x => x[0]).join('').substring(0, 2).toUpperCase();
-        const estUSDT = (25000 / m.price).toFixed(1);
-        const estBYN = ((25000 / m.price) * makerRate).toFixed(1);
+        const calcRub = (m.max > 0 && m.max < userBalance) ? m.max : userBalance;
+        const estUSDT = (calcRub / m.price).toFixed(1);
+        const estBYN = (estUSDT * makerRate).toFixed(1);
+
+        let badgeHtml = '<span class="tag-match">YOOMONEY</span>';
+        if (isOverBudget) {
+          badgeHtml = '<span class="tag-match" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border-color: rgba(239, 68, 68, 0.3);">ВЫШЕ БАЛАНСА</span>';
+        } else if (isMatch) {
+          badgeHtml = '<span class="tag-match"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> В ПОРОГЕ</span>';
+        }
 
         item.innerHTML = `
           <div class="deal-top">
@@ -1154,7 +1185,7 @@
               <div class="deal-price">${m.price.toFixed(2)}</div>
               <div class="deal-curr">RUB / USDT</div>
             </div>
-            ${isMatch ? '<span class="tag-match"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> В ПОРОГЕ</span>' : '<span class="tag-match">YOOMONEY</span>'}
+            ${badgeHtml}
           </div>
 
           <div class="deal-user-row">
@@ -1175,7 +1206,7 @@
           </div>
 
           <div class="deal-estimate-line">
-            <span>На 25 000 RUB:</span>
+            <span>На ${calcRub.toLocaleString()} RUB${calcRub < userBalance ? ' (макс. лота)' : ''}:</span>
             <span><b style="color: #fff;">${estUSDT} USDT</b> ➔ <b style="color: var(--pastel-mint);">~${estBYN} BYN</b></span>
           </div>
 
@@ -1283,11 +1314,20 @@
     const labelTarget = document.getElementById('label-target');
     const labelRepeats = document.getElementById('label-repeats');
     const labelMaker = document.getElementById('label-maker');
+    const labelBalance = document.getElementById('label-balance');
+    const balanceInput = document.getElementById('balance-input');
 
     function syncSettingsUI() {
       labelTarget.innerText = `${targetPrice.toFixed(1)} RUB`;
       labelRepeats.innerText = `${sirenRepeats} раз`;
       labelMaker.innerText = `${makerRate.toFixed(2)} BYN`;
+      if (labelBalance) labelBalance.innerText = `${userBalance.toLocaleString()} RUB`;
+      if (balanceInput) balanceInput.value = userBalance;
+
+      document.querySelectorAll('#balance-chips .chip-btn').forEach(btn => {
+        const val = parseFloat(btn.getAttribute('data-balance'));
+        btn.classList.toggle('active', Math.abs(val - userBalance) < 1.0);
+      });
 
       document.querySelectorAll('#target-chips .chip-btn').forEach(btn => {
         const val = parseFloat(btn.getAttribute('data-target'));
@@ -1304,6 +1344,31 @@
         btn.classList.toggle('active', Math.abs(val - makerRate) < 0.02);
       });
     }
+
+    if (balanceInput) {
+      balanceInput.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value) || 0;
+        if (val > 0) {
+          userBalance = val;
+          currentAmount = val;
+          if (labelBalance) labelBalance.innerText = `${userBalance.toLocaleString()} RUB`;
+          document.querySelectorAll('#balance-chips .chip-btn').forEach(b => b.classList.remove('active'));
+          renderOrderbook();
+          updateCalculator();
+        }
+      });
+    }
+
+    document.querySelectorAll('#balance-chips .chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        triggerHaptic('selection');
+        userBalance = parseFloat(btn.getAttribute('data-balance'));
+        currentAmount = userBalance;
+        syncSettingsUI();
+        renderOrderbook();
+        updateCalculator();
+      });
+    });
 
     document.querySelectorAll('#target-chips .chip-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1336,11 +1401,13 @@
       localStorage.setItem('targetPrice', targetPrice);
       localStorage.setItem('sirenRepeats', sirenRepeats);
       localStorage.setItem('makerRate', makerRate);
+      localStorage.setItem('userBalance', userBalance);
 
       const payload = {
         target_price: targetPrice,
         siren_repeat_count: sirenRepeats,
         maker_rate: makerRate,
+        user_balance: userBalance,
         alert_enabled: true
       };
 
@@ -1355,11 +1422,11 @@
       if (sent) {
         showToast('Параметры переданы в бот');
       } else {
-        const cmd = `/target ${targetPrice.toFixed(1)}`;
+        const cmd = `/start cfg_${targetPrice.toFixed(1)}_${sirenRepeats}_${makerRate.toFixed(2)}_${Math.round(userBalance)}`;
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(cmd);
         }
-        showToast('Для смены в боте напишите ' + targetPrice.toFixed(1) + ' в чат');
+        showToast('Баланс и порог сохранены');
       }
     }
 
